@@ -1,0 +1,71 @@
+{
+    "router": {
+        "1": {
+            "name": "string",
+            "vendor": "string",
+            "model": "string",
+            "secret": "",
+            "ssh": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "telnet": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "serial": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "2": {
+            "name": "string",
+            "vendor": "string",
+            "model": "string",
+            "secret": "",
+            "ssh": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "telnet": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "serial": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "3": {
+            "name": "string",
+            "vendor": "string",
+            "model": "string",
+            "secret": "",
+            "ssh": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "telnet": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 0
+            },
+            "serial": {
+                "username": "",
+                "password": ""
+            }
+        }
+    },
+    "switch": {}
+}
