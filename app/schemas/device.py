@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 from typing import Optional
 from enum import Enum
+from app.models import device_vendor_mapping
+
+#TODO - Wrong. Look at Swagger instead of vendor device type is shown
+Vendors=Enum("Vendors", [(vendor, vendor) for vendor in device_vendor_mapping.keys()])
 
 class DeviceKinds(str,Enum):
     router="router"
@@ -35,7 +39,7 @@ class DeviceResponse(Device):
     pass
 
 class DeviceUpdate(BaseModel): 
-    name: Optional[str]
+    hostname: Optional[str]
     vendor: Optional[str]
     model: Optional[str]
     secret: Optional[str] = ""

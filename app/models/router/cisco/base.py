@@ -1,6 +1,6 @@
 import re
 from ciscoconfparse import CiscoConfParse
-from pprint import pprint
+
 
 #TODO - Check if channel is free to use
 
@@ -16,6 +16,7 @@ from pprint import pprint
 
 #TODO - Different OS means different cmds. Does each Series only have one OS or can they differ?
 class CiscoBaseRouter:
+    """basic router"""
     @staticmethod
     def show_version(handler):
         """Show version"""
@@ -126,12 +127,8 @@ class CiscoBaseRouter:
     def no_shutdown_interface(handler, interface_type, interface_id):
         pass
     
-    
-class Cisco1800(CiscoBaseRouter):
-    pass
-
 CiscoBaseRouter.MAP = {
-    "Show": {
+    "show": {
         CiscoBaseRouter.show_version.__doc__: {
             "func": CiscoBaseRouter.show_version,
             "args": []
@@ -145,63 +142,10 @@ CiscoBaseRouter.MAP = {
             "args": []
         }
     },
-    "Configure": {
+    "configure": {
         CiscoBaseRouter.configure_interface_ip.__doc__: {
             "func": CiscoBaseRouter.configure_interface_ip,
             "args": ["interface_type", "interface_id", "ip", "subnet"]
         }
     }
 }
-
-
-if __name__ == '__main__':
-    CONFIG="""
-interface BRI0
- no ip address
- encapsulation hdlc
- no ip route-cache
- shutdown
-!
-interface FastEthernet0
- encapsulation dot1Q 2 native
- ip address 192.168.178.200 255.255.255.0 
- no ip route-cache
- duplex auto
- speed auto
- shutdown
-!
-interface FastEthernet1.1
- no ip address
- no ip route-cache
- shutdown
- duplex auto
- speed auto
-!
-interface FastEthernet 2
- no ip address
- no ip route-cache
- shutdown
- duplex auto
- speed auto
-!
-interface FastEthernet 2/9.2
- ip address 192.168.178.201 255.255.255.0 
- no ip route-cache
- duplex auto
- speed auto
-!
-interface GigabitEthernet 0/0
- encapsulation dot1Q 4 native
- ip address 192.168.178.204 255.255.255.0 
- no ip route-cache
- duplex auto
- speed auto
-!
-interface Vlan1
- no ip address
- no ip route-cache
- shutdown
-!
-end"""
-    CONFIG=[s for s in CONFIG.splitlines() if s]
-    pprint(CiscoBaseRouter.show_interfaces_parser(CONFIG))
