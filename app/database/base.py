@@ -2,7 +2,7 @@ import json
 import os
 from app.core import settings
 from app.database.exceptions import DatabaseNotInitializedException, DatabaseAlreadyInitializedException
-
+import app.models
 
 class Database(object):
     def __init__(self):
@@ -12,7 +12,9 @@ class Database(object):
         if os.path.isfile(settings.DATABASE_PATH) or self.db:
             raise DatabaseAlreadyInitializedException()
         with open(settings.DATABASE_PATH, "w") as db_handler: 
-            self.db={"router": {}, "switch": {}}
+            self.db=dict()#{"router": {}, "switch": {}}
+            for device_type in app.models.device_vendor_mapping.keys():
+                self.db[device_type]=dict()
             json.dump(self.db, db_handler, indent=4)
         return True
     

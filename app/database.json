@@ -1,27 +1,31 @@
 {
     "router": {
-        "testhost": {
-            "hostname": "string",
-            "vendor": "string",
-            "model": "string",
-            "secret": "1234",
+        "rlutz": {
+            "hostname": "RLutz",
+            "vendor": "cisco",
+            "model": "1800 series",
+            "secret": "class",
             "ssh": {
                 "username": "",
                 "password": "",
                 "host": "",
-                "port": 0
+                "port": 0,
+                "device_type_netmiko": ""
             },
             "telnet": {
                 "username": "",
                 "password": "",
                 "host": "",
-                "port": 0
+                "port": 0,
+                "device_type_netmiko": ""
             },
             "serial": {
                 "username": "",
-                "password": ""
+                "password": "",
+                "device_type_netmiko": "cisco_ios_serial"
             }
         }
     },
-    "switch": {}
+    "switch": {},
+    "layer3_switch": {}
 }

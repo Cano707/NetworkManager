@@ -4,7 +4,8 @@ from fastapi_utils.cbv import cbv
 from zmq import device
 from app.database import db as db_handler
 from app import schemas
-from app.models import device_vendor_mapping
+#from app.models import device_vendor_mapping
+import app.models
 
 device_router=APIRouter()
 
@@ -12,42 +13,38 @@ device_router=APIRouter()
 class DeviceCBV:
     db: dict = Depends(db_handler.read)
     
-    @device_router.post("/{device_kind}/add/{hostname}")
-    def add_device(self, hostname: str, device_kind: schemas.DeviceKinds, device: schemas.Device):
+    @device_router.post("/{device_kind}/add/{key}")
+    def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.Device):
         try:
-            self.db[device_kind.value][hostname]=device.dict()
+            #TODO - Check if vendor and model are supported
+            self.db[device_kind.value][key]=device.dict()
             db_handler.write()
             return {"message": "success"}
         except Exception as e:
             return {"Exception": "Internal Server Error"}
 
-    @device_router.put("/{device_kind}/update/{hostname}")
-    def update_device(self, hostname: str, device_kind: schemas.DeviceKinds, device: schemas.DeviceUpdate):
+    @device_router.put("/{device_kind}/update/{key}")
+    def update_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.DeviceUpdate):
         try:
-            if not hostname in self.db[device_kind.value]:
+            if not key in self.db[device_kind.value]:
                 return {"message": "Host {hostname} does not exist."}
-            self.db[device_kind.value][hostname].update(device.dict())    
+            for subkey, value in device.dict().items():
+                if type(value) is str:
+                    self.db[device_kind.value][key][subkey]=value   
             db_handler.write()
             return {"message": "success"}
         except Exception as e:
             return {"Exception": "Internal Server Error"}
         
-    @device_router.get("/{device_kind}/get/{hostname}")
-    def get_device(self, device_kind: schemas.DeviceKinds, hostname: str):
-        if hostname in self.db[device_kind]:
-            return self.db[device_kind.value][hostname]
-        return {"Error": f"Host {hostname} does not exist."}
+    @device_router.get("/{device_kind}/get/{key}")
+    def get_device(self, device_kind: app.models.DeviceKinds, key: str):
+        if key in self.db[device_kind]:
+            return self.db[device_kind.value][key]
+        return {"Error": f"Host {key} does not exist."}
     
     @device_router.get("/{device_kind}/get-all")
-    def get_all_devices(self, device_kind: schemas.DeviceKinds):
+    def get_all_devices(self, device_kind: app.models.DeviceKinds):
         return self.db[device_kind.value]
     
-    @device_router.get("/{device_kind}/info/vendors")
-    def supported_vendors(self, device_kind: schemas.DeviceKinds):
-        vendor_model_mapping=device_vendor_mapping[device_kind.value]
-        vendors=list(vendor_model_mapping.keys())
-        return {"vendors": vendors}
     
-    @device_router.get("/{device_kind}/info/{vendor}")
-    def supported_vendor_models(self, device_kind: schemas.DeviceKinds, vendor: schemas.Vendors):
-        pass
+    

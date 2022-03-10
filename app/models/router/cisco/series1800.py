@@ -6,3 +6,5 @@ class Cisco1800Series(CiscoBaseRouter):
 Cisco1800Series.MAP = {
     **CiscoBaseRouter.MAP
 }
+
+

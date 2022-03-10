@@ -2,6 +2,11 @@ import sys
 import serial
 import glob
 import netmiko
+from enum import Enum
+
+#TODO - Yet to implement and to embed
+class DeviceTypesNetmiko(str, Enum):
+    pass
 
 class Connector:
     # Low level connection class
