@@ -13,7 +13,7 @@ device_router=APIRouter()
 class DeviceCBV:
     db: dict = Depends(db_handler.read)
     
-    @device_router.post("/{device_kind}/add/{key}")
+    @device_router.post("/{device_kind}/{key}/add")
     def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.Device):
         try:
             #TODO - Check if vendor and model are supported
@@ -23,7 +23,7 @@ class DeviceCBV:
         except Exception as e:
             return {"Exception": "Internal Server Error"}
 
-    @device_router.put("/{device_kind}/update/{key}")
+    @device_router.put("/{device_kind}/{key}/update")
     def update_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.DeviceUpdate):
         try:
             if not key in self.db[device_kind.value]:
@@ -36,7 +36,7 @@ class DeviceCBV:
         except Exception as e:
             return {"Exception": "Internal Server Error"}
         
-    @device_router.get("/{device_kind}/get/{key}")
+    @device_router.get("/{device_kind}/{key}/get")
     def get_device(self, device_kind: app.models.DeviceKinds, key: str):
         if key in self.db[device_kind]:
             return self.db[device_kind.value][key]

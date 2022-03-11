@@ -19,7 +19,7 @@ class CiscoBaseRouter:
     """basic router"""
     @staticmethod
     def show_version(handler):
-        """Show version"""
+        """show_version"""
         command="show version"
         if handler.check_enable_mode():
             if handler.check_config_mode():
@@ -44,7 +44,7 @@ class CiscoBaseRouter:
     
     @staticmethod
     def show_ipv4_route(handler):
-        """Show IP route"""
+        """show_ip_route"""
         command="show ip route"
         if handler.check_enable_mode():
             if handler.check_config_mode():
@@ -73,7 +73,7 @@ class CiscoBaseRouter:
     #TODO - currently only the interfaces are parsed. Future version shall also parse all other params.
     @staticmethod
     def show_interfaces(handler) -> str:
-        """Show Interfaces"""
+        """show_interfaces"""
         """
         "show run interface ..." to check a particular interface "show run | begin <word>" to start displaying the config at a specific line containing <word> "show run | include <word>" to display all the lines containing the given <word> "show run | section <word>" is a good one, too 
         """
@@ -116,12 +116,19 @@ class CiscoBaseRouter:
     
     @staticmethod
     def configure_interface_ip(handler, interface_type, interface_id, ip, subnet):
-        """Configure interface"""
+        """configure_interface"""
         commands=[
             f"interface {interface_type}{interface_id}",
             f"ip address {ip} {subnet}"
             ]
-        return handler.send_config_set(commands)
+        res=list()
+        if not handler.check_enable_mode():
+            handler.enable()
+        if handler.check_config_mode():
+            handler.exit_config_mode()
+        res=handler.send_config_set(commands)
+        print(res)
+        return res
     
     @staticmethod
     def no_shutdown_interface(handler, interface_type, interface_id):
@@ -131,21 +138,19 @@ CiscoBaseRouter.MAP = {
     "show": {
         CiscoBaseRouter.show_version.__doc__: {
             "func": CiscoBaseRouter.show_version,
-            "args": []
         },
         CiscoBaseRouter.show_ipv4_route.__doc__: {
             "func": CiscoBaseRouter.show_ipv4_route,
-            "args": []
         },
         CiscoBaseRouter.show_interfaces.__doc__: {
             "func": CiscoBaseRouter.show_interfaces,
-            "args": []
         }
     },
     "configure": {
         CiscoBaseRouter.configure_interface_ip.__doc__: {
             "func": CiscoBaseRouter.configure_interface_ip,
-            "args": ["interface_type", "interface_id", "ip", "subnet"]
+            "args": ["interface_type", "interface_id", "ip", "subnet"],
+            "opt": []
         }
     }
 }

@@ -21,6 +21,7 @@ class Connector:
         # Issue is, that `handler.enable()` raises an exception claiming that `secret`
         # has not been given, although it has been. 
         kwargs["global_delay_factor"]=2
+        kwargs["session_log"]="netmiko_session.log"
         try:
             handler = netmiko.ConnectHandler(**kwargs)
         except Exception as e:
