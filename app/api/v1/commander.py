@@ -7,6 +7,10 @@ import app.models
 
 command_router=APIRouter()
 
+#TODO - Redo the whole fucking thing!
+#TODO - Refactoring
+#TODO - Plastic surgery
+#TODO - Exception handling
 @cbv(command_router)
 class CommandCBV:
     db: dict = Depends(db_handler.read)

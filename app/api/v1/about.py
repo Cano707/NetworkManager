@@ -4,6 +4,9 @@ import app.models
 
 info_router=APIRouter()
 
+
+#TODO - Exception Handling
+#TODO - Refactoring
 @cbv(info_router)
 class InfoCBV:
     @info_router.get("/supported-devices")
@@ -16,7 +19,6 @@ class InfoCBV:
         vendors=list(app.models.device_vendor_mapping[device_kind.value].keys())
         return {"vendors": vendors}
     
-    #TODO - Importante!
     @info_router.get("/supported-models/{vendor}/{device_kind}")
     def supported_vendor_models(self, device_kind: app.models.DeviceKinds, vendor: app.models.Vendors):
         if device_kind.value not in app.models.device_vendor_mapping.keys():

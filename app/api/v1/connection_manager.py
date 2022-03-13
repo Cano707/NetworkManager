@@ -9,6 +9,9 @@ from app.api.v1.handlers import Handlers
 
 connect_router=APIRouter()
 
+#TODO - Refactoring
+#TODO - Plastic surgery
+#TODO - Exception handling
 @cbv(connect_router)
 class ConnectCBV:
     db: dict = Depends(db_handler.read)
@@ -22,6 +25,7 @@ class ConnectCBV:
         ports=Connector.list_serial_ports()
         return {"ports": ports}
     
+    #TODO - SSH/Telnet yet to be implemented
     @connect_router.post("/{device_kind}/{key}/new-connection/{connection_type}")
     def connect(self, key: str, device_kind: app.models.DeviceKinds, connection_type: app.schemas.ConnectionType, port: Optional[str] = ""):
         if connection_type.value == "serial":

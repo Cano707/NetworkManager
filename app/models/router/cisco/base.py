@@ -11,9 +11,6 @@ from ciscoconfparse import CiscoConfParse
 
 #TODO - Error message needs to be parsed. All possible errors?
 
-#TODO - Instances of classes should be possible - e.g. the state of "enable" needs to be tracked
-#       Solved with if statements. 
-
 #TODO - Different OS means different cmds. Does each Series only have one OS or can they differ?
 class CiscoBaseRouter:
     """basic router"""
@@ -127,7 +124,6 @@ class CiscoBaseRouter:
         if handler.check_config_mode():
             handler.exit_config_mode()
         res=handler.send_config_set(commands)
-        print(res)
         return res
     
     @staticmethod

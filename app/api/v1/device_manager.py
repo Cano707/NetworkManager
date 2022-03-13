@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
 from zmq import device
 from app.database import db as db_handler
@@ -9,11 +9,14 @@ import app.models
 
 device_router=APIRouter()
 
+#TODO - Refactoring
+#TODO - Plastic surgery
+#TODO - Exception handling
 @cbv(device_router)
 class DeviceCBV:
     db: dict = Depends(db_handler.read)
     
-    @device_router.post("/{device_kind}/{key}/add")
+    @device_router.post("/{device_kind}/{key}")
     def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.Device):
         try:
             #TODO - Check if vendor and model are supported
@@ -21,9 +24,9 @@ class DeviceCBV:
             db_handler.write()
             return {"message": "success"}
         except Exception as e:
-            return {"Exception": "Internal Server Error"}
+            raise HTTPException(status_code=500, detail="error, see logs.")
 
-    @device_router.put("/{device_kind}/{key}/update")
+    @device_router.put("/{device_kind}/{key}")
     def update_device(self, key: str, device_kind: app.models.DeviceKinds, device: schemas.DeviceUpdate):
         try:
             if not key in self.db[device_kind.value]:

@@ -13,24 +13,8 @@ RLutz#
 RLutz#configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 RLutz(config)#
-RLutz(config)#interface fastethernet2
-RLutz(config-if)#ip address 10.10.10.1 255.255.255.0
-
-% IP addresses may not be configured on L2 links.
-
-RLutz(config-if)#
-RLutz(config-if)#end
-RLutz#
-RLutz#
-Jan  2 13:24:07.699: %SYS-5-CONFIG_I: Configured from console by console
-RLutz#
-RLutz#
-RLutz#
-RLutz#configure terminal
-Enter configuration commands, one per line.  End with CNTL/Z.
-RLutz(config)#
 RLutz(config)#interface fastethernet1
-RLutz(config-if)#ip address 10.10.10.1 255.255.255.0
+RLutz(config-if)#ip address 10.10.10.2 255.255.255.0
 RLutz(config-if)#
 RLutz(config-if)#end
 RLutz#
