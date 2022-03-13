@@ -9,7 +9,6 @@ device_vendor_mapping={
     "switch": switch_vendor_model_mapping
 }
 
-
 # Enum of supported vendors for FastAPI to use for verification.
 def create_vendor_list(mapping):
     result=list()
@@ -29,7 +28,6 @@ Vendors=Enum("Vendors", create_vendor_list(device_vendor_mapping))
 
 #DeviceTypesNetmiko=Enum("DeviceTypesNetmiko", CLASS_MAPPER_FOR_ENUM)
 #print(DeviceTypesNetmiko.__members__)
-    
     
     
 # Represents supported devices which will be used by fastapi for verification.

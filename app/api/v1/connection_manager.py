@@ -1,120 +1,95 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
 from app.database import db as db_handler
 from app.core import Connector
-from typing import Literal, Optional
+from typing import Optional
 import app.schemas
 import app.models 
 from app.api.v1.handlers import Handlers
 
 connect_router=APIRouter()
 
-#TODO - Refactoring
-#TODO - Plastic surgery
-#TODO - Exception handling
 @cbv(connect_router)
 class ConnectCBV:
     db: dict = Depends(db_handler.read)
     handlers: dict = Depends(Handlers.get_handlers)
-    
-    def __init__(self):
-        pass
-    
-    @connect_router.get("/ports")
+
+    @connect_router.get("/serial-ports")
     def get_serial_ports(self):
+        """Returns available ports on server
+
+        Returns:
+            dict: Available ports
+        """
         ports=Connector.list_serial_ports()
         return {"ports": ports}
     
-    #TODO - SSH/Telnet yet to be implemented
-    @connect_router.post("/{device_kind}/{key}/new-connection/{connection_type}")
+    @connect_router.post("/{device_kind}/{key}/{connection_type}")
     def connect(self, key: str, device_kind: app.models.DeviceKinds, connection_type: app.schemas.ConnectionType, port: Optional[str] = ""):
+        """Connects via `connection_type` to host specified by `key` and `device_kind`
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+            connection_type (app.schemas.ConnectionType): Supported connection types
+            port (Optional[str], optional): Specifies port to use for connection. tty/USB port for serial and connection port for telnet/ssh. Defaults to "".
+
+        Raises:
+            Exception: Raised in case of an unknown error
+            DeviceDoesNotExistException: Raised if device under `key` does not exist
+            PortDoesNotExistException: Raised if port is not available on server
+
+        Returns:
+            dict: success
+        """
+        if key not in self.db[device_kind.value]:
+            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+        
         if connection_type.value == "serial":
             if port not in Connector.list_serial_ports():
-                return {"Error": f"Port {port} could not be found."}
-            host=self.db[device_kind.value][key]
-            device_type_nemtiko=host["serial"]["device_type_netmiko"]
-            username=host["serial"]["username"]
-            password=host["serial"]["password"]
-            secret=host["secret"]
-            connection_data={
-                "device_type": device_type_nemtiko,
-                "username": username,
-                "password": password,
-                "secret": secret,
-                "serial_settings": {
-                    "port": port
-                }
-            }
-            try: 
-                handler=Connector.connect(**connection_data)
-            except Exception as e:
-                return {"error": "Connection failed. See logs for more information."}
-            self.handlers[device_kind.value][key]=handler
-            return {"message": "success"}
-        elif connection_type.value == "ssh" or connection_type.value == "telnet":
-            if not key in self.db[device_kind.value]:
-                return {"Error": f"Host {key} does not exit."}
+                raise HTTPException(status_code=406, detail=f"Port {port} could not be found")  
             host=self.db[device_kind.value][key]
             connection_data=host[connection_type.value]
-            if connection_type.value == "ssh" or connection_type.value == "telnet":
-                if not (connection_data[connection_type.value]["username"] or 
-                        connection_data[connection_type.value]["password"] or
-                        connection_data[connection_type.value]["host"] or
-                        connection_data[connection_type.value]["port"]):
-                    return {"Error": "Missing connection data."}
-                # Connect
-            return {"message": "success"}
-    
-    @connect_router.post("/{device_kind}/{key}/disconnect")
-    def disconnect(self, key: str, device_kind: app.models.DeviceKinds):
-        if key in self.handlers.keys():
-            self.handlers[key].disconnect()
-            return {"detail": "success"}
-        return {"detail": "failure"}
+            connection_data["secret"]=host["secret"]
+            connection_data["serial_settings"]={"port": port}
+        elif connection_type.value == "ssh" or connection_type.value == "telnet":
+            host=self.db[device_kind.value][key]
+            connection_data=host[connection_type.value]
+            if port:
+                connection_data["port"]=port
             
-        
-    """
-    #TODO - Fuse this and next method
-    @connect_router.post("/{device_kind}/{key}/new-connection/remote/{connection_type}")
-    def connect_remote(self, key: str, device_kind: app.models.DeviceKinds, connection_type: app.schemas.ConnectionType): 
-        if not key in self.db[device_kind.value]:
-            return {"Error": f"Host {key} does not exit."}
-        host=self.db[device_kind.value][key]
-        connection_data=host[connection_type.value]
-        if connection_type.value == "ssh" or connection_type.value == "telnet":
-            if not (connection_data[connection_type.value]["username"] or 
-                    connection_data[connection_type.value]["password"] or
-                    connection_data[connection_type.value]["host"] or
-                    connection_data[connection_type.value]["port"]):
-                return {"Error": "Missing connection data."}
-            # Connect
-        return {"message": "success"}
-
-    @connect_router.post("/{device_kind}/{key}/new-connection/serial")
-    def connect_serial(self, key: str, device_kind: app.models.DeviceKinds, port: str):
-        if port not in Connector.list_serial_ports():
-            return {"Error": f"Port {port} could not be found."}
-        host=self.db[device_kind.value][key]
-        device_type_nemtiko=host["serial"]["device_type_netmiko"]
-        username=host["serial"]["username"]
-        password=host["serial"]["password"]
-        secret=host["secret"]
-        connection_data={
-            "device_type": device_type_nemtiko,
-            "username": username,
-            "password": password,
-            "secret": secret,
-            "serial_settings": {
-                "port": port
-            }
-        }
-        try: 
+        try:
             handler=Connector.connect(**connection_data)
         except Exception as e:
-            return {"error": "Connection failed. See logs for more information."}
+            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+        
         self.handlers[device_kind.value][key]=handler
-        return {"message": "success"}
-    """
+        return {"detail": "success"}
+    
+    @connect_router.post("/{device_kind}/{key}")
+    def disconnect(self, key: str, device_kind: app.models.DeviceKinds):
+        """Disconnects from host under `key`
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+
+        Raises:
+            Exception: Raised in case of an unknown error
+            DeviceDoesNotExistException: Raised if device under `key` does not exist
+
+        Returns:
+            _type_: _description_
+        """
+        if not key in self.handlers.keys():
+            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+        try:
+            self.handlers[key].disconnect()
+            return {"detail": "success"}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+        
+            
     
  
     

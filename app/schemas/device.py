@@ -12,20 +12,20 @@ class SSHCredentials(BaseModel):
     username: str = ""
     password: str = ""
     host: str = ""
-    port: int = 0
-    device_type_netmiko: str = ""
+    port: int = 22
+    device_type: str = ""
     
 class TelnetCredentials(BaseModel): 
     username: str = ""
     password: str = ""
     host: str = ""
-    port: int = 0
-    device_type_netmiko: str = ""
+    port: int = 21
+    device_type: str = ""
     
 class SerialCredentials(BaseModel): 
     username: str = ""
     password: str = ""
-    device_type_netmiko: str = ""
+    device_type: str = ""
 
 class Device(BaseModel):
     hostname: str = ""
@@ -35,10 +35,6 @@ class Device(BaseModel):
     ssh: Optional[SSHCredentials] = SSHCredentials()
     telnet: Optional[TelnetCredentials] = TelnetCredentials()
     serial: Optional[SerialCredentials] = SerialCredentials()
-    
-#TODO - ???
-class DeviceResponse(Device): 
-    pass
 
 class DeviceUpdate(BaseModel): 
     hostname: Optional[str] 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
 import app.models
 
@@ -8,23 +8,46 @@ info_router=APIRouter()
 #TODO - Exception Handling
 #TODO - Refactoring
 @cbv(info_router)
-class InfoCBV:
-    @info_router.get("/supported-devices")
+class AboutCBV:
+    """Represents API endpoints for `about`."""
+    @info_router.get("")
     def supported_devices(self):
+        """Returns supported device kinds.
+
+        Returns:
+            dict: List of supported device kinds
+        """
         devices=list(app.models.device_vendor_mapping.keys())
-        return {"supported-devices": devices}
+        return {"detail": devices}
     
-    @info_router.get("/supported-vendors/{device_kind}")
+    @info_router.get("/{device_kind}")
     def supported_vendors(self, device_kind: app.models.DeviceKinds):
+        """Returns supported vendors for `device_kind`
+
+        Args:
+            device_kind (app.models.DeviceKinds): Supported device kinds
+
+        Returns:
+            dict: List of supported vendors for `device_kind`
+        """
         vendors=list(app.models.device_vendor_mapping[device_kind.value].keys())
-        return {"vendors": vendors}
+        return {"detail": vendors}
     
-    @info_router.get("/supported-models/{vendor}/{device_kind}")
+    @info_router.get("/{device_kind}/{vendor}")
     def supported_vendor_models(self, device_kind: app.models.DeviceKinds, vendor: app.models.Vendors):
-        if device_kind.value not in app.models.device_vendor_mapping.keys():
-            return {"Error": f"Device {device_kind} not supported."}
+        """Returns supported models for `vendor` of `device_kind`
+
+        Args:
+            device_kind (app.models.DeviceKinds): Supported device kinds
+            vendor (app.models.Vendors): Supported vendors
+
+        Raises:
+            VendorNotSupportedException: Raise of `vendor` is not supported
+
+        Returns:
+            dict: List of supported models for `vendor` of `device_kind`
+        """
         if vendor.value not in app.models.device_vendor_mapping[device_kind.value].keys():
-            return {"Error": f"Vendor {vendor} not supported."}
+            raise HTTPException(status_code=406, detail=f"Vendor {vendor} not supported.")
         supported_models=list(app.models.device_vendor_mapping[device_kind.value][vendor.value].keys())
-        #supported_models_names=[model.__doc__ for model in supported_models]
-        return {"supported-models": supported_models}
+        return {"detail": supported_models}

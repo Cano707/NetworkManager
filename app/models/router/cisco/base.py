@@ -134,19 +134,25 @@ CiscoBaseRouter.MAP = {
     "show": {
         CiscoBaseRouter.show_version.__doc__: {
             "func": CiscoBaseRouter.show_version,
+            "args": list(),
+            "opts": list()
         },
         CiscoBaseRouter.show_ipv4_route.__doc__: {
             "func": CiscoBaseRouter.show_ipv4_route,
+            "args": list(),
+            "opts": list()
         },
         CiscoBaseRouter.show_interfaces.__doc__: {
             "func": CiscoBaseRouter.show_interfaces,
+            "args": list(),
+            "opts": list()
         }
     },
     "configure": {
         CiscoBaseRouter.configure_interface_ip.__doc__: {
             "func": CiscoBaseRouter.configure_interface_ip,
             "args": ["interface_type", "interface_id", "ip", "subnet"],
-            "opt": []
+            "opts": []
         }
     }
 }

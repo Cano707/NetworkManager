@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict, Union
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
 from app.api.v1.handlers import Handlers
@@ -19,88 +19,145 @@ class CommandCBV:
     def __init__(self):
         pass
     
-    def get_host_details(self, key: str, device_kind: app.models.DeviceKinds):
+    def get_host_details(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, str]:
+        """Return vendor and model of host
+
+        Args:
+            key (str): Specifies host
+            device_kind (app.models.DeviceKinds): Supported device kinds
+
+        Returns:
+            dict: vendor and model of host
+        """
         host=self.db[device_kind.value][key]
         vendor=host["vendor"]
         model=host["model"]
         return {"vendor": vendor, "model": model}
     
-    @command_router.get("/{device_kind}/{key}/get-available-command-types")
-    def get_command_types(self, key: str, device_kind: app.models.DeviceKinds):
+    @command_router.get("/{device_kind}/{key}")
+    def get_command_types(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, list]:
+        """Returns available commands for model of specified host (`key`)
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+
+        Raises:
+            DeviceDoesNotExistException: Raised if device under `key` does not exist
+
+        Returns:
+            Dict[str, list]: List of available command types
+        """
         if key not in self.db[device_kind.value].keys():
             raise HTTPException(status_code=406, detail=f"Host {key} does not exit.")
-            #return {"error": f"Host {key} does not exit."}
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         model_command_map=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP
         model_command_types=list(model_command_map.keys())
-        return {"types": model_command_types}
+        return {"detail": model_command_types}
     
-    @command_router.get("/{device_kind}/{key}/get-commands/{type}")
-    def get_commands(self, key: str, device_kind: app.models.DeviceKinds, type: str):
-        """
-        if key not in self.db[device_kind.value].keys():
-            return {"error": f"Host {key} does not exit."}
-        host=self.db[device_kind.value][key]
-        vendor=host["vendor"]
-        model=host["model"]
-        model_map=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP
-        model_types=list(model_map.keys())
+    @command_router.get("/{device_kind}/{key}/{type}")
+    def get_commands(self, key: str, device_kind: app.models.DeviceKinds, type: str) -> Dict[str, list]:
+        """Returns available commands for specified host (`key`)
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+            type (str): Command type
+
+        Raises:
+            TypeDoesNotExist: Raised if `type` does not exist
+
+        Returns:
+            Dict[str, list]: List of available commands
         """
         model_command_types=self.get_command_types(key=key, device_kind=device_kind)
         if type not in model_command_types["types"]:
-            raise HTTPException(status_code=406, detail=f"Commands of type {type} do not exit.")
+            raise HTTPException(status_code=406, detail=f"Commands of type {type} do not exist")
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         model_commands=list(app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type].keys())
-        return {"commands": model_commands}
+        return {"detail": model_commands}
     
-    @command_router.get("/{device_kind}/{key}/get-command-details/{type}/{command}")
-    def get_command_details(self, key: str, device_kind: app.models.DeviceKinds, type: str, command: str):
+    @command_router.get("/{device_kind}/{key}/{type}/{command}")
+    def get_command_details(self, key: str, device_kind: app.models.DeviceKinds, type: str, command: str) -> dict[str, Union[str, list]]:
+        """Returns mandatory and optional arguments for `command`
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+            type (str): Command type
+            command (str): Command 
+
+        Raises:
+            CommandDoesNotExist: Raised if command does not exist
+
+        Returns:
+            dict[str, Union[str, list]]: Mandatory (args) and optional (opts) arguments for command
         """
-        if key not in self.db[device_kind.value].keys():
-            return {"error": f"Host {key} does not exit."}
-        host=self.db[device_kind.value][key]
-        vendor=host["vendor"]
-        model=host["model"]
-        model_map=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP
-        model_types=list(model_map.keys())
-        if type not in model_types:
-            return {"error": f"Commands of type {type} do not exit."}
-        commands=model_map[type]
+        commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
+        if command not in commands:
+            raise HTTPException(status_code=406, detail=f"Command {command} does not exit")
+        
+        host_details=self.get_host_details(key=key, device_kind=device_kind)
+        command=app.models.device_vendor_mapping[device_kind][host_details["vendor"]][host_details["model"]].MAP[type][command]
+     
+        args=command["args"]
+        opts=command["opts"]
+        return {"args": args, "opts": opts}
+    
+    @command_router.post("/{device_kind}/{key}/{type}/{command}")
+    def execute_command(self, key: str, device_kind: app.models.DeviceKinds, type: str, command: str, args_opts: dict) -> Dict[str, Any]:
+        """Executes command and returns result, if result exists
+
+        Args:
+            key (str): Specifies device
+            device_kind (app.models.DeviceKinds): Supported device kinds
+            type (str): Command type
+            command (str): Command 
+            args_opts (dict): Mandatory and optional arguments to pass to `command`
+
+        Raises:
+            Exception: Raised in case of an unknown error
+            InvalidArgumentsException: Raised if arguments are invalid
+            CommandDoesNotExistException: Raised if `command` does not exist
+
+        Returns:
+            Dict[str, Any]: Result of `command`
         """
         host_details=self.get_host_details(key=key, device_kind=device_kind)
-        commands=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type]
+        commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
         if command not in commands.keys():
-            raise HTTPException(status_code=406, detail=f"Command {command} does not exit.")
-        command=commands[command]
-        args=list()
-        opt=list()
-        if "args" in command.keys():
-            args=command["args"]
-        if "opt" in command.keys():
-            opt=command["opt"]
-        return {"args": args, "opt": opt}
-    
-    @command_router.post("/{device_kind}/{key}/execute/{type}/{command}")
-    def execute_command(self, device_kind: app.models.DeviceKinds, key: str, type: str, command: str, args_opts: dict):
-        host_details=self.get_host_details(key=key, device_kind=device_kind)
-        #command_details=self.get_command_details(key=key, device_kind=device_kind, type=type, command=command)
-        commands=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type]
-        if command not in commands.keys():
-            raise HTTPException(status_code=406, detail=f"Command {command} does not exit.")
-        command_details=commands[command]
-        if "args" in command_details.keys() and not self.validate_command(mandatory_args=command_details["args"], given_args=args_opts):
-            raise HTTPException(status_code=400, detail=f"missing arguments")
+            raise HTTPException(status_code=406, detail=f"Command {command} does not exit")
+        
+        command_details=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type][command]
+        
+        if not self.validate_command(mandatory_args=command_details["args"], optional_args=command_details["opts"], given_args=args_opts):
+            raise HTTPException(status_code=400, detail=f"Invalid arguments")
+        
         handler=self.handlers[device_kind.value][key]
-        function=commands[command]["func"]
+        try:
+            function=commands[command]["func"]
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
         result=function(handler=handler, **args_opts)
         return result
         
     #TODO - What arguments are missing?
-    def validate_command(self, mandatory_args: dict, given_args: dict):
-        mandatory_args=mandatory_args
-        given_args_opts=given_args.keys()
-        not_valid=set(mandatory_args) - set(given_args_opts)
-        if not_valid:
+    #TODO - Options can depend on each other. For example, option a is optional if not present but requires option b to be set when a itself is set
+    def validate_command(self, mandatory_args: list, optional_args: list, given_args: dict) -> bool:
+        """Validates arguments for command to execute
+
+        Args:
+            mandatory_args (list): Mandatory arguments
+            optional_args (list): Optional arguements
+            given_args (dict): Given arguemnts 
+
+        Returns:
+            bool: Valid (true) or Invalid (false)
+        """
+        given_args_keys=given_args.keys()
+        if not set(mandatory_args)-set(given_args_keys):
+            return False
+        if not (set(given_args_keys)-set(mandatory_args))-set(optional_args):
             return False
         return True
         
