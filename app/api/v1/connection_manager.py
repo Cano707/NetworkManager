@@ -36,18 +36,18 @@ class ConnectCBV:
 
         Raises:
             Exception: Raised in case of an unknown error
-            DeviceDoesNotExistException: Raised if device under `key` does not exist
+            HostDoesNotExistException: Raised if device under `key` does not exist
             PortDoesNotExistException: Raised if port is not available on server
 
         Returns:
             dict: success
         """
         if key not in self.db[device_kind.value]:
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+            raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         
         if connection_type.value == "serial":
             if port not in Connector.list_serial_ports():
-                raise HTTPException(status_code=406, detail=f"Port {port} could not be found")  
+                raise HTTPException(status_code=406, detail="PortDoesNotExistException")  
             host=self.db[device_kind.value][key]
             connection_data=host[connection_type.value]
             connection_data["secret"]=host["secret"]
@@ -61,7 +61,7 @@ class ConnectCBV:
         try:
             handler=Connector.connect(**connection_data)
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
         
         self.handlers[device_kind.value][key]=handler
         return {"detail": "success"}
@@ -82,12 +82,12 @@ class ConnectCBV:
             _type_: _description_
         """
         if not key in self.handlers.keys():
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
             self.handlers[key].disconnect()
             return {"detail": "success"}
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
         
             
     

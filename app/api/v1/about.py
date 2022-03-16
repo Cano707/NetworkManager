@@ -10,7 +10,7 @@ info_router=APIRouter()
 @cbv(info_router)
 class AboutCBV:
     """Represents API endpoints for `about`."""
-    @info_router.get("")
+    @info_router.get("/")
     def supported_devices(self):
         """Returns supported device kinds.
 
@@ -48,6 +48,6 @@ class AboutCBV:
             dict: List of supported models for `vendor` of `device_kind`
         """
         if vendor.value not in app.models.device_vendor_mapping[device_kind.value].keys():
-            raise HTTPException(status_code=406, detail=f"Vendor {vendor} not supported.")
+            raise HTTPException(status_code=406, detail="VendorNotSupportedException")
         supported_models=list(app.models.device_vendor_mapping[device_kind.value][vendor.value].keys())
         return {"detail": supported_models}

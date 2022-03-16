@@ -19,7 +19,10 @@ def create_vendor_list(mapping):
     unique=list(set(result))
     return list(zip(unique, unique))
 
-Vendors=Enum("Vendors", create_vendor_list(device_vendor_mapping))
+class StrEnum(str, Enum):
+    """Enum where members are also (and must be) strs"""
+
+Vendors=StrEnum("Vendors", create_vendor_list(device_vendor_mapping))
 
 # Create a mapping from supported devices to supported devices {"cisco_ios_serial": "cisco_ios_serial", ...}
 # Reason: Swagger will use the auto-generated numbers to show the choices, since the names must be shown 
@@ -31,12 +34,4 @@ Vendors=Enum("Vendors", create_vendor_list(device_vendor_mapping))
     
     
 # Represents supported devices which will be used by fastapi for verification.
-DeviceKinds=Enum("DeviceKinds", [(key, key) for key in device_vendor_mapping.keys()])
-
-
-"""
-#TODO - Rename to "SupportedDevices"
-class DeviceKinds(str,Enum):
-    router="router"
-    switch="switch"
-"""
+DeviceKinds=StrEnum("DeviceKinds", [(key, key) for key in device_vendor_mapping.keys()])

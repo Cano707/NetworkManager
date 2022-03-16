@@ -43,13 +43,13 @@ class CommandCBV:
             device_kind (app.models.DeviceKinds): Supported device kinds
 
         Raises:
-            DeviceDoesNotExistException: Raised if device under `key` does not exist
+            HostDoesNotExistException: Raised if device under `key` does not exist
 
         Returns:
             Dict[str, list]: List of available command types
         """
         if key not in self.db[device_kind.value].keys():
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exit.")
+            raise HTTPException(status_code=406, detail=f"HostDoesNotExistException")
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         model_command_map=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP
         model_command_types=list(model_command_map.keys())
@@ -65,14 +65,14 @@ class CommandCBV:
             type (str): Command type
 
         Raises:
-            TypeDoesNotExist: Raised if `type` does not exist
+            CommandTypeDoesNotExist: Raised if `type` does not exist
 
         Returns:
             Dict[str, list]: List of available commands
         """
-        model_command_types=self.get_command_types(key=key, device_kind=device_kind)
-        if type not in model_command_types["types"]:
-            raise HTTPException(status_code=406, detail=f"Commands of type {type} do not exist")
+        model_command_types=self.get_command_types(key=key, device_kind=device_kind)["detail"]
+        if type not in model_command_types:
+            raise HTTPException(status_code=406, detail=f"CommandTypeDoesNotExist")
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         model_commands=list(app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type].keys())
         return {"detail": model_commands}
@@ -95,7 +95,7 @@ class CommandCBV:
         """
         commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
         if command not in commands:
-            raise HTTPException(status_code=406, detail=f"Command {command} does not exit")
+            raise HTTPException(status_code=406, detail="CommandDoesNotExist")
         
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         command=app.models.device_vendor_mapping[device_kind][host_details["vendor"]][host_details["model"]].MAP[type][command]
@@ -125,21 +125,21 @@ class CommandCBV:
         """
         host_details=self.get_host_details(key=key, device_kind=device_kind)
         commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
-        if command not in commands.keys():
-            raise HTTPException(status_code=406, detail=f"Command {command} does not exit")
+        if command not in commands:
+            raise HTTPException(status_code=406, detail="CommandDoesNotExistException")
         
         command_details=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type][command]
         
         if not self.validate_command(mandatory_args=command_details["args"], optional_args=command_details["opts"], given_args=args_opts):
-            raise HTTPException(status_code=400, detail=f"Invalid arguments")
+            raise HTTPException(status_code=400, detail="InvalidArgumentsException")
         
         handler=self.handlers[device_kind.value][key]
         try:
-            function=commands[command]["func"]
+            function=command_details["func"]
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
         result=function(handler=handler, **args_opts)
-        return result
+        return {"detail": result}
         
     #TODO - What arguments are missing?
     #TODO - Options can depend on each other. For example, option a is optional if not present but requires option b to be set when a itself is set
@@ -155,9 +155,9 @@ class CommandCBV:
             bool: Valid (true) or Invalid (false)
         """
         given_args_keys=given_args.keys()
-        if not set(mandatory_args)-set(given_args_keys):
+        if set(mandatory_args)-set(given_args_keys):
             return False
-        if not (set(given_args_keys)-set(mandatory_args))-set(optional_args):
+        if (set(given_args_keys)-set(mandatory_args))-set(optional_args):
             return False
         return True
         

@@ -1,4 +1,30 @@
 {
-    "router": {},
+    "router": {
+        "rlutz": {
+            "hostname": "rlutz",
+            "vendor": "cisco",
+            "model": "1800 series",
+            "secret": "class",
+            "ssh": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 22,
+                "device_type": ""
+            },
+            "telnet": {
+                "username": "",
+                "password": "",
+                "host": "",
+                "port": 21,
+                "device_type": ""
+            },
+            "serial": {
+                "username": "",
+                "password": "",
+                "device_type": "cisco_ios_serial"
+            }
+        }
+    },
     "switch": {}
 }

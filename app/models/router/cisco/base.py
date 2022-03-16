@@ -14,15 +14,47 @@ from ciscoconfparse import CiscoConfParse
 #TODO - Different OS means different cmds. Does each Series only have one OS or can they differ?
 class CiscoBaseRouter:
     """basic router"""
-    @staticmethod
-    def show_version(handler):
+    
+    @classmethod
+    def __reset_mode(cls, handler) -> None:
+        """reset mode"""
+        if handler.check_config_mode():
+            handler.exit_config_mode()
+        elif not handler.check_enable_mode():
+            handler.enable()
+            
+    @classmethod
+    def __error_check(cls, res) -> bool:
+        pass
+    
+            
+    @classmethod
+    def __send_config_set(cls, handler, commands) -> str:
+        try:
+            res=handler.send_config_set(commands)
+            return res
+        except Exception as e:
+            #TODO - Logging
+            return False
+        
+    @classmethod    
+    def __send_command(cls, handler, command) -> str:
+        try: 
+            res=handler.send_command(command)
+            return res
+        except Exception as e:
+            #TODO - Logging
+            return False
+    
+    @classmethod
+    def show_version(cls, handler):
         """show_version"""
         command="show version"
-        if handler.check_enable_mode():
-            if handler.check_config_mode():
-                command="do show version"
-        res=handler.send_command(command)
-        parsed_res=CiscoBaseRouter.show_version_parser(res)
+        cls.__reset_mode(handler)
+        res=cls.__send_command(handler, command)
+        if not res:
+            return "failed"
+        parsed_res=cls.show_version_parser(res)
         return parsed_res
 
     @staticmethod
@@ -39,16 +71,15 @@ class CiscoBaseRouter:
             uptime={"hour": uptime_matches.groups()[0], "minute": uptime_matches.groups()[1]}
         return {"uptime": uptime, **version}
     
-    @staticmethod
-    def show_ipv4_route(handler):
+    @classmethod
+    def show_ipv4_route(cls, handler):
         """show_ip_route"""
         command="show ip route"
-        if handler.check_enable_mode():
-            if handler.check_config_mode():
-                command="do show ip route"
-        handler.enable()
-        res=handler.send_command(command)
-        parsed_res=CiscoBaseRouter.show_ipv4_route_parser(res)
+        cls.__reset_mode(handler)
+        res=cls.__send_command(command)
+        if not res:
+            return "failed"
+        parsed_res=cls.show_ipv4_route_parser(res)
         return parsed_res
         
     @staticmethod
@@ -67,21 +98,15 @@ class CiscoBaseRouter:
                 routing_table[root_net]=dict()
         return routing_table
     
-    #TODO - currently only the interfaces are parsed. Future version shall also parse all other params.
-    @staticmethod
-    def show_interfaces(handler) -> str:
+    @classmethod
+    def show_interfaces(cls, handler) -> str:
         """show_interfaces"""
-        """
-        "show run interface ..." to check a particular interface "show run | begin <word>" to start displaying the config at a specific line containing <word> "show run | include <word>" to display all the lines containing the given <word> "show run | section <word>" is a good one, too 
-        """
-        command="show running-config" # show running-config | interfaces  
-        if handler.check_enable_mode():
-            if handler.check_config_mode():
-                command="do show ip route"
-        else:
-            handler.enable()    
-        res=handler.send_command(command)
-        parsed_res=CiscoBaseRouter.show_interfaces_parser(res)
+        command="show running-config | begin interface" 
+        cls.__reset_mode(handler)  
+        res=cls.__send_command(command)
+        if not res:
+            return "failed"
+        parsed_res=cls.show_interfaces_parser(res)
         return parsed_res
     
     @staticmethod
@@ -111,24 +136,45 @@ class CiscoBaseRouter:
             result[interface_type]=interface_result
         return result
     
-    @staticmethod
-    def configure_interface_ip(handler, interface_type, interface_id, ip, subnet):
-        """configure_interface"""
+    @classmethod
+    def configure_interface_ip(cls, handler, interface_type, interface_id, ip, subnet):
+        """interface"""
         commands=[
             f"interface {interface_type}{interface_id}",
             f"ip address {ip} {subnet}"
             ]
-        res=list()
-        if not handler.check_enable_mode():
-            handler.enable()
-        if handler.check_config_mode():
-            handler.exit_config_mode()
-        res=handler.send_config_set(commands)
-        return res
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(commands)
+        if not res: # and not cls.__error_check
+            return "failed"
+        return "succeeded"
     
-    @staticmethod
-    def no_shutdown_interface(handler, interface_type, interface_id):
-        pass
+    @classmethod
+    def configure_shutdown_interface(cls, handler, interface_type, interface_id, shutdown):
+        """interface_shutdown"""
+        commands=[
+            f"interface {interface_type}{interface_id}",
+            "shutdown" if shutdown else "no shutdown"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(commands)
+        if not res: # and not cls.__error_check
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def configure_interface_description(cls, handler, interface_type, interface_id, description):
+        """interface_description"""
+        commands=[
+            f"interface {interface_type}{interface_id}",
+            f"description {description}"
+            ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(commands)
+        if not res: # and not cls.__error_check
+            return "failed"
+        return "succeeded"
+        
     
 CiscoBaseRouter.MAP = {
     "show": {
@@ -152,7 +198,18 @@ CiscoBaseRouter.MAP = {
         CiscoBaseRouter.configure_interface_ip.__doc__: {
             "func": CiscoBaseRouter.configure_interface_ip,
             "args": ["interface_type", "interface_id", "ip", "subnet"],
-            "opts": []
+            "opts": list()
+        },
+        CiscoBaseRouter.configure_interface_description.__doc__: {
+            "func": CiscoBaseRouter.configure_interface_ip,
+            "args": ["interface_type", "interface_id", "description"],
+            "opts": list()
+        },
+        CiscoBaseRouter.configure_shutdown_interface.__doc__:{
+            "func": CiscoBaseRouter.configure_shutdown_interface,
+            "args": ["interface_type", "interface_id", "shutdown"],
+            "opts": list() 
         }
+        
     }
 }

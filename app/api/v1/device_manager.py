@@ -1,3 +1,4 @@
+from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
 from app.database import db as db_handler
@@ -28,22 +29,25 @@ class DeviceCBV:
         Returns:
             dict: {'detail': 'success'}
         """
+        device=device.dict()
         vendor=device["vendor"]
         model=device["model"]
         # Check if vendor and/or model are supported
-        if (vendor not in app.models.device_vendor_mapping[device_kind.value] and 
+        print(vendor not in app.models.device_vendor_mapping[device_kind.value])
+        print(model not in app.models.device_vendor_mapping[device_kind.value][vendor])
+        if (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
             model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
-                raise HTTPException(status_code=406, detail=f"Vendor {vendor} and/or model {model} not supported.")
+                raise HTTPException(status_code=406, detail="VendorModelNotSupportedException")
         try:
             # Add device to database
-            self.db[device_kind.value][key]=device.dict()
+            self.db[device_kind.value][key]=device
             db_handler.write()
             return {"detail": "success"}
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
         
     @device_router.delete("/{device_kind}/{key}")
-    def delete_device(self, key: str, device_kind: app.models.DeviceKinds):
+    def delete_device(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, str]:
         """Deletes device specified by `key`
 
         Args:
@@ -55,15 +59,15 @@ class DeviceCBV:
             DeviceDoesNotExistException: Raised if device under `key` does not exist
 
         Returns:
-            dict: {'detail': 'success'}
+            dict: {'detail': 'success'} if operation was successful 
         """
         if key not in self.db[device_kind.value]:
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
             self.db[device_kind.value].pop(key)
             return {"detail": "success"}
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
 
     @device_router.put("/{device_kind}/{key}")
     def update_device(self, key: str, device_kind: app.models.DeviceKinds, device: app.schemas.DeviceUpdate):
@@ -76,13 +80,13 @@ class DeviceCBV:
 
         Raises:
             Exception: Raised in case of an unknown error
-            DeviceDoesNotExistException: Raised if device under `key` does not exist
+            HostDoesNotExistException: Raised if device under `key` does not exist
 
         Returns:
-            dict: {'detail': 'success'}
+            dict: {'detail': 'success'} if operation was successful 
         """
         if key in self.db[device_kind.value]:
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+            raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         try:
             for subkey, value in device.dict().items():
                 # Update only those attributes of received device, if those are of type str.
@@ -91,7 +95,7 @@ class DeviceCBV:
             db_handler.write()
             return {"detail": "success"}
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details.")
+            raise HTTPException(status_code=500, detail="Exception")
  
         
     @device_router.get("/{device_kind}/{key}")
@@ -110,11 +114,11 @@ class DeviceCBV:
             dict: Specified device
         """
         if key in self.db[device_kind]:
-            raise HTTPException(status_code=406, detail=f"Host {key} does not exist.")
+            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
             return self.db[device_kind.value][key]
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details")
+            raise HTTPException(status_code=500, detail="Exception")
     
     @device_router.get("/{device_kind}")
     def get_all_devices(self, device_kind: app.models.DeviceKinds):
@@ -132,7 +136,7 @@ class DeviceCBV:
         try:
             return self.db[device_kind.value]
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Internal Server Error. Please see logs for details")
+            raise HTTPException(status_code=500, detail="Exception")
     
     
     
