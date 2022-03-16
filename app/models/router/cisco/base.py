@@ -60,16 +60,11 @@ class CiscoBaseRouter:
     @staticmethod
     def show_version_parser(data):
         version={}
-        uptime={}
         version_pattern=r"Cisco.*?Version\s*(.*?)(?=,)"
         version_matches=re.search(version_pattern, data)
         if version_matches:
             version={"version": version_matches.groups()[0]}
-        uptime_pattern=r"(\d*)(?:\s*hours),\s(\d*)"
-        uptime_matches=re.search(uptime_pattern, data)
-        if uptime_matches:
-            uptime={"hour": uptime_matches.groups()[0], "minute": uptime_matches.groups()[1]}
-        return {"uptime": uptime, **version}
+        return version
     
     @classmethod
     def show_ipv4_route(cls, handler):
