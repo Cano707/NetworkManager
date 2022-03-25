@@ -33,8 +33,6 @@ class DeviceCBV:
         vendor=device["vendor"]
         model=device["model"]
         # Check if vendor and/or model are supported
-        print(vendor not in app.models.device_vendor_mapping[device_kind.value])
-        print(model not in app.models.device_vendor_mapping[device_kind.value][vendor])
         if (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
             model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
                 raise HTTPException(status_code=406, detail="VendorModelNotSupportedException")
