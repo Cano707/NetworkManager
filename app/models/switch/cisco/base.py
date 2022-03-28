@@ -1,7 +1,23 @@
+import re
+from typing import List
+from app.models import CommandError
+
 #TODO - Yet to implement this.
 
 class CiscoBaseSwitch:
     """basic switch"""
+    
+    """
+    COMMON_ERRORS=["Invalid input detected at '^' marker."]
+    
+    VLAN_ERRORS=["No Virtual LANs configured."]
+    
+    error_map={
+        "common": COMMON_ERRORS,
+        "vlan": VLAN_ERRORS
+    }
+    """
+    
     @classmethod
     def __reset_mode(cls, handler) -> None:
         """reset mode"""
@@ -11,8 +27,22 @@ class CiscoBaseSwitch:
             handler.enable()
     
     @classmethod
-    def __error_check(cls, res) -> bool:
-        pass
+    def __error_check(cls, res) -> bool:# error_types: List[str]) -> bool:
+        res=res.strip()
+        error_marker=res[0:1]
+        if error_marker[0]=="%" and error_marker[1]==" ":
+            return True
+        return False
+        """
+        for error_type in error_types:
+            if error_type not in cls.error_map:
+                raise KeyError(f"error_type {error_type} not found.")
+            for error in cls.error_map[error_type]:
+                if error in res:
+                    #TODO - Logging
+                    return True
+        return False
+        """
             
     @classmethod
     def __send_config_set(cls, handler, commands) -> str:
@@ -38,7 +68,7 @@ class CiscoBaseSwitch:
         command="show version"
         cls.__reset_mode(handler)
         res=cls.__send_command(handler, command)
-        if not res:
+        if not res and not cls.__error_check(res):
             return "failed"
         parsed_res=cls.show_version_parser(res)
         return parsed_res
@@ -54,20 +84,54 @@ class CiscoBaseSwitch:
     
     @classmethod
     def show_vlans(cls, handler):
-        command="show vlan"
+        command="show vlan brief"
         cls.__reset_mode(handler)
         res=cls.send_command(command)
-        if not res:
+        if not res and not cls.__error_check(res):
             return "failed"
         parsed_res=cls.show_vlans_parser(res)
         return parsed_res
     
     @staticmethod
     def show_vlans_parser(data):
-    pass
+        root_pattern=r"(?:(\d+)\s+(.*?[^\s]+))\s+(.*?[^\s]+)\s*(.*)"
+        sub_pattern=r"(.*)"
+        vlan_table=dict()
+        root_vlan=None
+        for line in data.split("\n"):
+            if line:
+                if line[0].isnumeric():
+                    matches=re.finditer(root_pattern, line.strip())
+                    for _, match in enumerate(matches):
+                        groups=match.groups()
+                        vlan=groups[0]
+                        name=groups[1]
+                        status=groups[2]
+                        ports=[port.strip() for port in groups[3].split(",") if port]
+                        root_vlan=vlan
+                        vlan_table[vlan]={"name": name, "status": status, "ports": ports}
+                elif line[0].isspace():
+                    matches=re.finditer(sub_pattern, line.strip())
+                    for _, match in enumerate(matches):
+                        groups=match.groups()
+                        ports=[port.strip() for port in groups[0].split(",") if port]
+                        vlan_table[root_vlan]["ports"].extend(ports)
+        return vlan_table
+    
+    #@classmethod
+    #def configure_interface
     
 CiscoBaseSwitch.MAP={
-    "Show": {
-        "Show Version": CiscoBaseSwitch.show_version
+    "show": {
+        CiscoBaseSwitch.show_version.__doc__: {
+            "func": CiscoBaseSwitch.show_version,
+            "args": list(),
+            "opts": list()
+        },
+        CiscoBaseSwitch.show_vlans.__doc__: {
+            "func": CiscoBaseSwitch.show_vlans,
+            "args": list(),
+            "opts": list()
+            }
     }
 }

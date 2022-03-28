@@ -1,4 +1,5 @@
 import re
+from typing import List
 from ciscoconfparse import CiscoConfParse
 
 
@@ -15,6 +16,17 @@ from ciscoconfparse import CiscoConfParse
 class CiscoBaseRouter:
     """basic router"""
     
+    """
+    COMMON_ERRORS=["Invalid input detected at '^' marker."]
+    
+    INTERFACE_ERRORS=["overlaps with"]
+    
+    error_map={
+        "common": COMMON_ERRORS,
+        "interface": INTERFACE_ERRORS
+    }
+    """
+    
     @classmethod
     def __reset_mode(cls, handler) -> None:
         """reset mode"""
@@ -24,8 +36,22 @@ class CiscoBaseRouter:
             handler.enable()
             
     @classmethod
-    def __error_check(cls, res) -> bool:
-        pass
+    def __error_check(cls, res) -> bool:# error_types: List[str]) -> bool:
+        res=res.strip()
+        error_marker=res[0:1]
+        if error_marker[0]=="%" and error_marker[1]==" ":
+            return True
+        return False
+        """
+        for error_type in error_types:
+            if error_type not in cls.error_map:
+                raise KeyError(f"error_type {error_type} not found.")
+            for error in cls.error_map[error_type]:
+                if error in res:
+                    #TODO - Logging
+                    return True
+        return False
+        """
     
             
     @classmethod
@@ -52,7 +78,7 @@ class CiscoBaseRouter:
         command="show version"
         cls.__reset_mode(handler)
         res=cls.__send_command(handler, command)
-        if not res:
+        if not res and not cls.__error_check(res):
             return "failed"
         parsed_res=cls.show_version_parser(res)
         return parsed_res
@@ -72,7 +98,7 @@ class CiscoBaseRouter:
         command="show ip route"
         cls.__reset_mode(handler)
         res=cls.__send_command(command)
-        if not res:
+        if not res and not cls.__error_check(res):
             return "failed"
         parsed_res=cls.show_ipv4_route_parser(res)
         return parsed_res
@@ -99,7 +125,7 @@ class CiscoBaseRouter:
         command="show running-config | begin interface" 
         cls.__reset_mode(handler)  
         res=cls.__send_command(command)
-        if not res:
+        if not res and not cls.__error_check(res):
             return "failed"
         parsed_res=cls.show_interfaces_parser(res)
         return parsed_res
@@ -140,7 +166,7 @@ class CiscoBaseRouter:
             ]
         cls.__reset_mode(handler)
         res=cls.__send_config_set(commands)
-        if not res: # and not cls.__error_check
+        if not res and not cls.__error_check(res):
             return "failed"
         return "succeeded"
     
@@ -153,7 +179,7 @@ class CiscoBaseRouter:
         ]
         cls.__reset_mode(handler)
         res=cls.__send_config_set(commands)
-        if not res: # and not cls.__error_check
+        if not res and not cls.__error_check(res):
             return "failed"
         return "succeeded"
     
@@ -166,10 +192,21 @@ class CiscoBaseRouter:
             ]
         cls.__reset_mode(handler)
         res=cls.__send_config_set(commands)
-        if not res: # and not cls.__error_check
+        if not res and not cls.__error_check(res): # and not cls.__error_check
             return "failed"
         return "succeeded"
         
+    @classmethod
+    def configure_hostname(cls, handler, hostname):
+        """hostname"""
+        commands=[
+            f"hostname {hostname}"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(commands)
+        if not res: # and not cls.__error_check
+            return "failed"
+        return "succeeded"
     
 CiscoBaseRouter.MAP = {
     "show": {
