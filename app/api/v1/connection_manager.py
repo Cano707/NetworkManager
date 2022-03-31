@@ -6,12 +6,13 @@ from typing import Optional
 import app.schemas
 import app.models 
 from app.api.v1.handlers import Handlers
+from app.crud.crud import CRUD
 
 connect_router=APIRouter()
 
 @cbv(connect_router)
 class ConnectCBV:
-    db: dict = Depends(db_handler.read)
+    db: dict = Depends(db_handler.get_instance) #CRUD instead
     handlers: dict = Depends(Handlers.get_handlers)
 
     @connect_router.get("/serial-ports")
@@ -42,23 +43,23 @@ class ConnectCBV:
         Returns:
             dict: success
         """
-        if key not in self.db[device_kind.value]:
+        host_data=CRUD.read(key, device_kind.value)
+        if not host_data:
             raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         
         if connection_type.value == "serial":
             if port not in Connector.list_serial_ports():
                 raise HTTPException(status_code=406, detail="PortDoesNotExistException")  
-            host=self.db[device_kind.value][key]
-            connection_data=host[connection_type.value]
-            connection_data["secret"]=host["secret"]
+            connection_data=host_data[connection_type.value]
+            connection_data["secret"]=host_data["secret"]
             connection_data["serial_settings"]={"port": port}
         elif connection_type.value == "ssh" or connection_type.value == "telnet":
-            host=self.db[device_kind.value][key]
-            connection_data=host[connection_type.value]
+            connection_data=host_data[connection_type.value]
             if port:
                 connection_data["port"]=port
             
         try:
+            #TODO - change type of port from int to str - check if it still works
             handler=Connector.connect(**connection_data)
         except Exception as e:
             raise HTTPException(status_code=500, detail="Exception")
@@ -76,13 +77,13 @@ class ConnectCBV:
 
         Raises:
             Exception: Raised in case of an unknown error
-            DeviceDoesNotExistException: Raised if device under `key` does not exist
+            HandlerNotFoundException: Raised if handler for host 'key' was not found
 
         Returns:
             _type_: _description_
         """
         if not key in self.handlers.keys():
-            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
+            raise HTTPException(status_code=406, detail="HandlerNotFoundException")
         try:
             self.handlers[key].disconnect()
             return {"detail": "success"}

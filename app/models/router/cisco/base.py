@@ -93,6 +93,17 @@ class CiscoBaseRouter:
         return version
     
     @classmethod
+    def show_running_config(cls, handler):
+        """show running-config"""
+        command="show running-config"
+        cls.__reset_mode(handler)
+        res=cls.__send_command(command)
+        if not res and not cls.__error_check(res):
+            #TODO - Log
+            return "failed"
+        return res
+    
+    @classmethod
     def show_ipv4_route(cls, handler):
         """show_ip_route"""
         command="show ip route"
@@ -204,7 +215,16 @@ class CiscoBaseRouter:
         ]
         cls.__reset_mode(handler)
         res=cls.__send_config_set(commands)
-        if not res: # and not cls.__error_check
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def configure_running_config(cls, handler, running_config):
+        """running-config"""
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(running_config)
+        if not res and not cls.__error_check(res):
             return "failed"
         return "succeeded"
     
@@ -224,6 +244,11 @@ CiscoBaseRouter.MAP = {
             "func": CiscoBaseRouter.show_interfaces,
             "args": list(),
             "opts": list()
+        },
+        CiscoBaseRouter.show_running_config.__doc__: {
+            "func": CiscoBaseRouter.show_running_config,
+            "args": list(),
+            "opts": list()
         }
     },
     "configure": {
@@ -241,6 +266,11 @@ CiscoBaseRouter.MAP = {
             "func": CiscoBaseRouter.configure_shutdown_interface,
             "args": ["interface_type", "interface_id", "shutdown"],
             "opts": list() 
+        },
+        CiscoBaseRouter.configure_running_config.__doc__: {
+            "func": CiscoBaseRouter.configure_running_config,
+            "args": ["running_config"],
+            "opts": list()
         }
         
     }

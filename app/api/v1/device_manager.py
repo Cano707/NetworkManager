@@ -5,13 +5,15 @@ from app.database import db as db_handler
 import app.schemas
 #from app.models import device_vendor_mapping
 import app.models
+from app.crud import CRUD
+from app.crud.exceptions import HostAlreadyExistsException
 
 device_router=APIRouter()
 
 @cbv(device_router)
 class DeviceCBV:
     """Represents API endpoints for the device manager."""
-    db: dict = Depends(db_handler.read)
+    #db: dict = Depends(db_handler.get_instance)
     
     @device_router.post("/{device_kind}/{key}")
     def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: app.schemas.Device):
@@ -23,8 +25,9 @@ class DeviceCBV:
             device (schemas.Device): Represents device object
 
         Raises:
-            Exception: Raised in case of an unknown error
-            VendorModelNotSupportedException: Raised if vendor and/or model are not supported
+            Error: Raised in case of an unknown error
+            HostAlreadyExists: Raised when `key` already exists
+            VendorModelNotSupported: Raised if vendor and/or model are not supported
 
         Returns:
             dict: {'detail': 'success'}
@@ -35,14 +38,20 @@ class DeviceCBV:
         # Check if vendor and/or model are supported
         if (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
             model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
-                raise HTTPException(status_code=406, detail="VendorModelNotSupportedException")
+                raise HTTPException(status_code=406, detail="VendorModelNotSupported")
         try:
             # Add device to database
-            self.db[device_kind.value][key]=device
-            db_handler.write()
+            #self.db[device_kind.value][key]=device
+            #db_handler.write()
+            CRUD.create(key, device_kind.value, device)
             return {"detail": "success"}
+        except HostAlreadyExistsException as e:
+            print(e)
+            raise HTTPException(status_code=500, detail="HostAlreadyExists")
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Exception")
+            
+            print(e)
+            raise HTTPException(status_code=500, detail="Error")
         
     @device_router.delete("/{device_kind}/{key}")
     def delete_device(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, str]:
@@ -54,18 +63,16 @@ class DeviceCBV:
 
         Raises:
             Exception: Raised in case of an unknown error
-            DeviceDoesNotExistException: Raised if device under `key` does not exist
 
         Returns:
             dict: {'detail': 'success'} if operation was successful 
         """
-        if key not in self.db[device_kind.value]:
-            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
-            self.db[device_kind.value].pop(key)
+            #self.db[device_kind.value].pop(key)
+            CRUD.delete(key, device_kind.value)
             return {"detail": "success"}
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Exception")
+            raise HTTPException(status_code=500, detail="Exception :See logs")
 
     @device_router.put("/{device_kind}/{key}")
     def update_device(self, key: str, device_kind: app.models.DeviceKinds, device: app.schemas.DeviceUpdate):
@@ -83,16 +90,25 @@ class DeviceCBV:
         Returns:
             dict: {'detail': 'success'} if operation was successful 
         """
-        if key in self.db[device_kind.value]:
-            raise HTTPException(status_code=406, detail="HostDoesNotExistException")
+        #if key in self.db[device_kind.value]:
+        #    raise HTTPException(status_code=406, detail="HostDoesNotExistException")
+        update_device=dict()
         try:
-            for subkey, value in device.dict().items():
+            for device_key, value in device.dict().items():
                 # Update only those attributes of received device, if those are of type str.
-                if type(value) is str:
-                    self.db[device_kind.value][key][subkey]=value   
-            db_handler.write()
+                if type(value) is str and value:
+                    #self.db[device_kind.value][key][subkey]=value   
+                    update_device[device_key]=value
+                elif type(value) is dict:
+                    update_device[device_key]=dict()
+                    for subkey, subvalue in value.items():
+                        if type(subvalue) is str and subvalue:
+                            update_device[device_key][subkey]=subvalue
+            #db_handler.write()
+            CRUD.update(key, device_kind.value, update_device)
             return {"detail": "success"}
         except Exception as e:
+            print(e)
             raise HTTPException(status_code=500, detail="Exception")
  
         
@@ -111,11 +127,16 @@ class DeviceCBV:
         Returns:
             dict: Specified device
         """
-        if key in self.db[device_kind]:
-            raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
+        #if key in self.db[device_kind]:
+        #    raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
-            return self.db[device_kind.value][key]
+            #return self.db[device_kind.value][key]
+            
+            data=CRUD.read(key, device_kind.value)
+            data.pop("_id")
+            return data
         except Exception as e:
+            print(e)
             raise HTTPException(status_code=500, detail="Exception")
     
     @device_router.get("/{device_kind}")
@@ -132,7 +153,11 @@ class DeviceCBV:
             dict: All stored devices of `device_kind`
         """
         try:
-            return self.db[device_kind.value]
+            #return self.db[device_kind.value]
+            data=CRUD.read_collection(device_kind.value)
+            for device in data:
+                device.pop("_id")
+            return data
         except Exception as e:
             raise HTTPException(status_code=500, detail="Exception")
     

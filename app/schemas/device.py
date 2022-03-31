@@ -12,14 +12,14 @@ class SSHCredentials(BaseModel):
     username: str = ""
     password: str = ""
     host: str = ""
-    port: int = 22
+    port: str = ""
     device_type: str = ""
     
 class TelnetCredentials(BaseModel): 
     username: str = ""
     password: str = ""
     host: str = ""
-    port: int = 21
+    port: str = ""
     device_type: str = ""
     
 class SerialCredentials(BaseModel): 

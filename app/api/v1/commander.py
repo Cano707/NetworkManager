@@ -1,9 +1,10 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Tuple, Union
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
 from app.api.v1.handlers import Handlers
 from app.database import db as db_handler
 import app.models
+from app.crud.crud import CRUD
 
 command_router=APIRouter()
 
@@ -13,13 +14,13 @@ command_router=APIRouter()
 #TODO - Exception handling
 @cbv(command_router)
 class CommandCBV:
-    db: dict = Depends(db_handler.read)
+    db: dict = Depends(db_handler.get_instance)
     handlers: dict = Depends(Handlers.get_handlers)
     
     def __init__(self):
         pass
     
-    def get_host_details(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, str]:
+    def extract_vendor_model(self, key: str, device_kind: app.models.DeviceKinds) -> Tuple[str]:
         """Return vendor and model of host
 
         Args:
@@ -29,10 +30,12 @@ class CommandCBV:
         Returns:
             dict: vendor and model of host
         """
-        host=self.db[device_kind.value][key]
+        host=self.db[device_kind.value].find_one({"key": key})
+        if not host:
+            raise HTTPException(status_code=406, detail=f"HostDoesNotExist")
         vendor=host["vendor"]
         model=host["model"]
-        return {"vendor": vendor, "model": model}
+        return vendor, model
     
     @command_router.get("/{device_kind}/{key}")
     def get_command_types(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, list]:
@@ -43,17 +46,25 @@ class CommandCBV:
             device_kind (app.models.DeviceKinds): Supported device kinds
 
         Raises:
-            HostDoesNotExistException: Raised if device under `key` does not exist
+            HostDoesNotExist: Raised if device under `key` does not exist
 
         Returns:
             Dict[str, list]: List of available command types
         """
-        if key not in self.db[device_kind.value].keys():
-            raise HTTPException(status_code=406, detail=f"HostDoesNotExistException")
-        host_details=self.get_host_details(key=key, device_kind=device_kind)
-        model_command_map=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP
+        try:
+            vendor, model = self.extract_vendor_model(key, device_kind)
+        except Exception as e:
+            #TODO - Log
+            print(e)
+            raise
+        model_command_map=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP
         model_command_types=list(model_command_map.keys())
         return {"detail": model_command_types}
+        
+        #host_details=self.get_host_details(key=key, device_kind=device_kind)
+        #model_command_map=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP
+        #model_command_types=list(model_command_map.keys())
+        #return {"detail": model_command_types}
     
     @command_router.get("/{device_kind}/{key}/{type}")
     def get_commands(self, key: str, device_kind: app.models.DeviceKinds, type: str) -> Dict[str, list]:
@@ -73,8 +84,8 @@ class CommandCBV:
         model_command_types=self.get_command_types(key=key, device_kind=device_kind)["detail"]
         if type not in model_command_types:
             raise HTTPException(status_code=406, detail=f"CommandTypeDoesNotExist")
-        host_details=self.get_host_details(key=key, device_kind=device_kind)
-        model_commands=list(app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type].keys())
+        vendor, model=self.extract_vendor_model(key, device_kind)
+        model_commands=list(app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP[type].keys())
         return {"detail": model_commands}
     
     @command_router.get("/{device_kind}/{key}/{type}/{command}")
@@ -97,8 +108,8 @@ class CommandCBV:
         if command not in commands:
             raise HTTPException(status_code=406, detail="CommandDoesNotExist")
         
-        host_details=self.get_host_details(key=key, device_kind=device_kind)
-        command=app.models.device_vendor_mapping[device_kind][host_details["vendor"]][host_details["model"]].MAP[type][command]
+        vendor, model=self.extract_vendor_model(key, device_kind)
+        command=app.models.device_vendor_mapping[device_kind][vendor][model].MAP[type][command]
      
         args=command["args"]
         opts=command["opts"]
@@ -117,21 +128,21 @@ class CommandCBV:
 
         Raises:
             Exception: Raised in case of an unknown error
-            InvalidArgumentsException: Raised if arguments are invalid
-            CommandDoesNotExistException: Raised if `command` does not exist
+            InvalidArguments: Raised if arguments are invalid
+            CommandDoesNotExist: Raised if `command` does not exist
 
         Returns:
             Dict[str, Any]: Result of `command`
         """
-        host_details=self.get_host_details(key=key, device_kind=device_kind)
+        vendor, model=self.extract_vendor_model(key=key, device_kind=device_kind)
         commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
         if command not in commands:
-            raise HTTPException(status_code=406, detail="CommandDoesNotExistException")
+            raise HTTPException(status_code=406, detail="CommandDoesNotExist")
         
-        command_details=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP[type][command]
+        command_details=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP[type][command]
         
         if not self.validate_command(mandatory_args=command_details["args"], optional_args=command_details["opts"], given_args=args_opts):
-            raise HTTPException(status_code=400, detail="InvalidArgumentsException")
+            raise HTTPException(status_code=400, detail="InvalidArguments")
         
         handler=self.handlers[device_kind.value][key]
         try:
