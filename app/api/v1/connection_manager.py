@@ -72,20 +72,21 @@ class ConnectCBV:
         """Disconnects from host under `key`
 
         Args:
-            key (str): Specifies device
-            device_kind (app.models.DeviceKinds): Supported device kinds
+            <br/>key (str): Specifies device
+            <br/>device_kind (app.models.DeviceKinds): Supported device kinds
 
         Raises:
-            Exception: Raised in case of an unknown error
-            HandlerNotFoundException: Raised if handler for host 'key' was not found
+            <br/>Exception: Raised in case of an unknown error
+            <br/>HandlerNotFound: Raised if handler for host 'key' was not found
 
         Returns:
-            _type_: _description_
+            <br/>_type_: _description_
         """
-        if not key in self.handlers.keys():
-            raise HTTPException(status_code=406, detail="HandlerNotFoundException")
+        if not key in self.handlers[device_kind.value].keys():
+            raise HTTPException(status_code=406, detail="HandlerNotFound")
         try:
-            self.handlers[key].disconnect()
+            self.handlers[device_kind.value][key].disconnect()
+            self.handlers[device_kind.value].pop(key)
             return {"detail": "success"}
         except Exception as e:
             raise HTTPException(status_code=500, detail="Exception")

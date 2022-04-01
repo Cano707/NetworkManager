@@ -140,11 +140,13 @@ class CommandCBV:
             raise HTTPException(status_code=406, detail="CommandDoesNotExist")
         
         command_details=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP[type][command]
-        
         if not self.validate_command(mandatory_args=command_details["args"], optional_args=command_details["opts"], given_args=args_opts):
             raise HTTPException(status_code=400, detail="InvalidArguments")
         
-        handler=self.handlers[device_kind.value][key]
+        try:
+            handler=self.handlers[device_kind.value][key]
+        except KeyError:
+            raise HTTPException(status_code=400, detail="NoConnection")
         try:
             function=command_details["func"]
         except Exception as e:
