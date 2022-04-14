@@ -319,7 +319,7 @@ CiscoBaseRouter.MAP = {
             "info": "",
             "args": ["interface_type", "interface_id", "description"],
             "opts": list(), 
-            "db": {"write": False, "field": "test"}
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.configure_shutdown_interface.__doc__:{
             "func": CiscoBaseRouter.configure_shutdown_interface,
@@ -333,7 +333,7 @@ CiscoBaseRouter.MAP = {
             "info": "Reconnect to the device after execution!",
             "args": ["hostname"],
             "opts": list(), 
-            "db": {"write": True, "field": "hostname"} # HOSTNAME NEEDS TO BE WRITTEN IN DATABASE 
+            "db": {"write": True, "field": "hostname"} 
         }
         
     },
