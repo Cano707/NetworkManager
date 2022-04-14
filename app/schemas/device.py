@@ -32,6 +32,7 @@ class Device(BaseModel):
     vendor: str = ""
     model: str = ""
     secret: Optional[str] = ""
+    config: Optional[list] = list()
     ssh: Optional[SSHCredentials] = SSHCredentials()
     telnet: Optional[TelnetCredentials] = TelnetCredentials()
     serial: Optional[SerialCredentials] = SerialCredentials()

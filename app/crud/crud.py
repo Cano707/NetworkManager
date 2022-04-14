@@ -10,7 +10,7 @@ class CRUD:
         pass
     
     @classmethod
-    def create(cls, key: str, device_type: str, device: dict):
+    def create(cls, key: str, device_type: str, device: dict): # device_type schemas.deviceTyüe
         data={"key":key, **device}
         try:
             res=cls.db[device_type].update_one({"key": key}, {"$setOnInsert": data}, upsert=True)

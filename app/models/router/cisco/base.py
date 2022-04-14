@@ -31,7 +31,6 @@ class CiscoBaseRouter:
     def __reset_mode(cls, handler) -> None:
         """reset_mode"""
         handler.enable()
-        print(f"handler.check_config_mode(): {handler.check_config_mode()}")
         if handler.check_config_mode():
             print("EXISING CONFIG MODE")
             handler.exit_config_mode()
@@ -106,7 +105,7 @@ class CiscoBaseRouter:
     
     @classmethod
     def show_running_config(cls, handler):
-        """running-config"""
+        """running_config"""
         command="show running-config"
         cls.__reset_mode(handler)
         res=cls.__send_command(handler, command)
@@ -183,7 +182,7 @@ class CiscoBaseRouter:
     
     @classmethod
     def configure_interface_ip(cls, handler, interface_type, interface_id, ip, subnet):
-        """interface"""
+        """interface_ip"""
         commands=[
             f"interface {interface_type}{interface_id}",
             f"ip address {ip} {subnet}"
@@ -195,7 +194,7 @@ class CiscoBaseRouter:
         return "succeeded"
     
     @classmethod
-    def configure_shutdown_interface(cls, handler, interface_type, interface_id, shutdown):
+    def configure_shutdown_interface(cls, handler, interface_type: str, interface_id: str, shutdown: bool):
         """interface_shutdown"""
         commands=[
             f"interface {interface_type}{interface_id}",
@@ -230,25 +229,21 @@ class CiscoBaseRouter:
         res=cls.__send_config_set(handler, commands)
         if not res and not cls.__error_check(res):
             return "failed"
-        return "succeeded"
+        return hostname
     
     @classmethod
     def upload_running_config(cls, handler, running_config: List[str]):
-        """upload running-config"""
+        """upload_running_config"""
         cls.__reset_mode(handler)
         res=cls.__send_config_set(handler, running_config)
         if not res and not cls.__error_check(res):
             return "failed"
-        return "succeeded"
-    
-    @classmethod
-    def store_running_config_to_database(cls, handler):
-        pass
-        
+        return "succeeded"    
     
     @classmethod
     def copy(cls, handler, source: str, source_file: str, destination: str, destination_file: str):
         """copy"""
+        """Copy from `source` to `destination`"""
         if source_file=="running-config" or source=="running-config" or source=="startup-config" or source_file=="startup-config":
             source_string=f"{source if source else source_file}"
         else:
@@ -271,6 +266,12 @@ class CiscoBaseRouter:
         # Error check not needed
         return "success"
     
+    @classmethod
+    def store_running_config_to_database(cls, handler):
+        """store_running_config_to_database"""
+        res=cls.show_running_config(handler)
+        return res
+    
 
         
     
@@ -278,58 +279,85 @@ CiscoBaseRouter.MAP = {
     "show": {
         CiscoBaseRouter.show_version.__doc__: {
             "func": CiscoBaseRouter.show_version,
+            "info": "",
             "args": list(),
-            "opts": list()
+            "opts": list(),
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.show_ipv4_route.__doc__: {
             "func": CiscoBaseRouter.show_ipv4_route,
+            "info": "",
             "args": list(),
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.show_interfaces.__doc__: {
             "func": CiscoBaseRouter.show_interfaces,
+            "info": "",
             "args": list(),
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.show_running_config.__doc__: {
             "func": CiscoBaseRouter.show_running_config,
+            "info": "",
             "args": list(),
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
         }
     },
     "configure": {
         CiscoBaseRouter.configure_interface_ip.__doc__: {
             "func": CiscoBaseRouter.configure_interface_ip,
+            "info": "",
             "args": ["interface_type", "interface_id", "ip", "subnet"],
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.configure_interface_description.__doc__: {
-            "func": CiscoBaseRouter.configure_interface_ip,
+            "func": CiscoBaseRouter.configure_interface_description,
+            "info": "",
             "args": ["interface_type", "interface_id", "description"],
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.configure_shutdown_interface.__doc__:{
             "func": CiscoBaseRouter.configure_shutdown_interface,
+            "info": "",
             "args": ["interface_type", "interface_id", "shutdown"],
-            "opts": list() 
+            "opts": list() , 
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.configure_hostname.__doc__: {
             "func": CiscoBaseRouter.configure_hostname,
+            "info": "Reconnect to the device after execution!",
             "args": ["hostname"],
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": True, "field": "hostname"} # HOSTNAME NEEDS TO BE WRITTEN IN DATABASE 
         }
         
     },
     "general": {
         CiscoBaseRouter.copy.__doc__: {
             "func" : CiscoBaseRouter.copy,
+            "info": "",
             "args" : ["source", "source_file", "destination", "destination_file"],
-            "opts": list()
+            "opts": list(),
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseRouter.upload_running_config.__doc__: {
             "func": CiscoBaseRouter.upload_running_config,
+            "info": "",
             "args": ["running_config"],
-            "opts": list()
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseRouter.store_running_config_to_database.__doc__: {
+            "func": CiscoBaseRouter.store_running_config_to_database,
+            "info": "",
+            "args": list(),
+            "opts": list(),
+            "db": {"write": True, "field": "config"}
         }
     }
 }

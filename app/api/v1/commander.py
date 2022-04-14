@@ -111,9 +111,10 @@ class CommandCBV:
         vendor, model=self.extract_vendor_model(key, device_kind)
         command=app.models.device_vendor_mapping[device_kind][vendor][model].MAP[type][command]
      
-        args=command["args"]
-        opts=command["opts"]
-        return {"args": args, "opts": opts}
+        #command.pop("func")
+        res={k:v for k, v in command.items() if k != "func"}
+     
+        return res
     
     @command_router.post("/{device_kind}/{key}/{type}/{command}")
     def execute_command(self, key: str, device_kind: app.models.DeviceKinds, type: str, command: str, args_opts: dict) -> Dict[str, Any]:
@@ -150,8 +151,14 @@ class CommandCBV:
         try:
             function=command_details["func"]
         except Exception as e:
+            #TODO LOGGING
+            print(e)
             raise HTTPException(status_code=500, detail="Exception")
+        
         result=function(handler=handler, **args_opts)
+        if command_details["db"]["write"]:
+            device={command_details["db"]["field"]: result}
+            CRUD.update(key=key, device_type=device_kind, device=device)
         return {"detail": result}
         
     #TODO - What arguments are missing?
