@@ -319,7 +319,7 @@ CiscoBaseRouter.MAP = {
             "info": "",
             "args": ["interface_type", "interface_id", "description"],
             "opts": list(), 
-            "db": {"write": False, "field": ""}
+            "db": {"write": False, "field": "test"}
         },
         CiscoBaseRouter.configure_shutdown_interface.__doc__:{
             "func": CiscoBaseRouter.configure_shutdown_interface,
