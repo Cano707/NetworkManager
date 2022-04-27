@@ -5,6 +5,8 @@ from app.api.v1.handlers import Handlers
 from app.database import db as db_handler
 import app.models
 from app.crud.crud import CRUD
+import logging
+from os import path
 
 command_router=APIRouter()
 
@@ -135,6 +137,16 @@ class CommandCBV:
         Returns:
             Dict[str, Any]: Result of `command`
         """
+        # Initialize Logger for device
+        """
+        device_logger=logging.getLogger(key)
+        device_logger.setLevel(logging.DEBUG)
+        filehandler=logging.FileHandler(str(path.join(".", "app", "logs", f"{key}.log")))
+        device_logger.addHandler(filehandler)
+        formatter=logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(funcName)s:%(lineno)d — %(message)s")
+        filehandler.setFormatter(formatter)
+        """
+        
         vendor, model=self.extract_vendor_model(key=key, device_kind=device_kind)
         commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
         if command not in commands:
@@ -148,14 +160,15 @@ class CommandCBV:
             handler=self.handlers[device_kind.value][key]
         except KeyError:
             raise HTTPException(status_code=400, detail="NoConnection")
+        
+        function=command_details["func"]
         try:
-            function=command_details["func"]
+            result=function(handler=handler, **args_opts)
         except Exception as e:
-            #TODO LOGGING
+            #TODO Logging
             print(e)
             raise HTTPException(status_code=500, detail="Exception")
         
-        result=function(handler=handler, **args_opts)
         if command_details["db"]["write"]:
             device={command_details["db"]["field"]: result}
             CRUD.update(key=key, device_type=device_kind, device=device)
@@ -180,5 +193,3 @@ class CommandCBV:
         if (set(given_args_keys)-set(mandatory_args))-set(optional_args):
             return False
         return True
-        
-        

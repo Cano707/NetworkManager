@@ -10,6 +10,8 @@ from app.crud.crud import CRUD
 
 connect_router=APIRouter()
 
+#TODO - Autodetect https://linuxtut.com/en/feff470e0093d0b7ca43/
+
 @cbv(connect_router)
 class ConnectCBV:
     db: dict = Depends(db_handler.get_instance) #CRUD instead

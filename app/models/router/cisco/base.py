@@ -86,7 +86,7 @@ class CiscoBaseRouter:
     @classmethod
     def show_version(cls, handler):
         """version"""
-        command="show version"
+        command="show version | include Version"
         cls.__reset_mode(handler)
         res=cls.__send_command(handler, command)
         if not res and not cls.__error_check(res):
@@ -272,6 +272,25 @@ class CiscoBaseRouter:
         res=cls.show_running_config(handler)
         return res
     
+    @classmethod
+    def custom_config_command(cls, handler, command):
+        """custom_config_command"""
+        res=cls.__send_config_set(handler, [command])
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def ssh(cls, handler, domain_name, modulus_bits=1024, ):
+        commands=['ip domain-name FH', 
+                  'crypto key generate rsa', 
+                  {}, 
+                  'username {} password {}', 
+                  'line vty {} {}', 
+                  'login {}', 
+                  'transport input ssh', 
+                  'exit', 
+                  'ip ssh version {}']
 
         
     
@@ -338,6 +357,13 @@ CiscoBaseRouter.MAP = {
         
     },
     "general": {
+        CiscoBaseRouter.custom_config_command.__doc__: {
+            "func" : CiscoBaseRouter.custom_config_command,
+            "info": "",
+            "args" : list(),
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
         CiscoBaseRouter.copy.__doc__: {
             "func" : CiscoBaseRouter.copy,
             "info": "",
