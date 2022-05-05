@@ -1,6 +1,7 @@
 from pydantic import BaseSettings
 import os
 
+"""Global configurations"""
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "NetworkManager"

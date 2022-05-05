@@ -14,11 +14,13 @@ Zielsetzungen
 
 - API Endpoints
 
+Netmiko und FastAPI
+
 Applikations Struktur und Implementierung 
 
 - Grundlegende Applikationsstruktur
 
-- Applikationsstruktur zur Umsetzung der Modularität
+- Umsetzung der Modularität
 
 - Klassenrepräsentation des Geräts
 
@@ -26,7 +28,7 @@ Applikations Struktur und Implementierung
   
   - Beispielhaft an der 'Routing Table'
 
-- 
+- API Endpoints
 
 Datenbank Aufbau und Anbindung
 
@@ -39,9 +41,5 @@ Basiskonfiguration von Router und Switch
 - Basiskonfiguration des Routers
 
 - Basiskonfiguration des Switches
-
-Hilfsbibliotheken
-
-- Netmiko
 
 Fazit

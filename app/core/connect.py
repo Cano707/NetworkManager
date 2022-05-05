@@ -4,15 +4,26 @@ import glob
 import netmiko
 from enum import Enum
 
-#TODO - Yet to implement and to embed
+#TODO - Yet to implement and to embed ??????????
 class DeviceTypesNetmiko(str, Enum):
     pass
 
+
+"""Implements methods to connect and disconnect to a network device"""
 class Connector:
     # Low level connection class
     def __init__(self):
         pass 
 
+        """Connects to a device
+
+        Raises:
+            e: General Exception due to a connection error
+            EnvironmentError: Raised when the running os is not supported
+
+        Returns:
+            netmiko.ConnectHandler: Handler representing the connection
+        """
     @staticmethod
     def connect(**kwargs) -> netmiko.ConnectHandler:
         #TODO - Extend exceptions handling
@@ -29,10 +40,20 @@ class Connector:
             raise e
         return handler
 
+    """Disconnects from device"""
     @staticmethod
     def disconnect(handler: netmiko.ConnectHandler):
         handler.disconnect()
         
+        
+    """Lists all available serial ports
+
+    Raises:
+        EnvironmentError: Raised if OS is not supported
+
+    Returns:
+        list: List of available ports
+    """
     @staticmethod
     def list_serial_ports() -> list:
         # https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python

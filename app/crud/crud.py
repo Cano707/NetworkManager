@@ -9,6 +9,12 @@ class CRUD:
     def __init__(self):
         pass
     
+    
+    """Creates an entry for a device
+
+    Raises:
+        HostAlreadyExistsException: Raised if the `key` already exists.
+    """
     @classmethod
     def create(cls, key: str, device_type: str, device: dict): # device_type schemas.deviceTyüe
         data={"key":key, **device}
@@ -22,6 +28,12 @@ class CRUD:
             #TODO - Log: Already exists
             raise HostAlreadyExistsException()
         
+        
+    """Reads and returns device with `key`
+
+    Returns:
+        Union[dict, None]: Returns dict with device data or None if device does not exist.
+    """
     @classmethod
     def read(cls, key: str, device_type: str) -> Union[dict, None]:
         try:
@@ -31,6 +43,11 @@ class CRUD:
             raise
         return data
         
+    """Reads and returns all devices of type `device_type`
+
+    Returns:
+        List[dict]: List of all devices as dicts
+    """
     @classmethod
     def read_collection(cls, device_type: str) -> List[dict]:
         try:
@@ -41,6 +58,8 @@ class CRUD:
         res=list(res)
         return res
     
+
+    """Updates an existing device"""
     @classmethod
     def update(cls, key: str, device_type: str, device: dict):
         update_device=dict()
@@ -56,12 +75,17 @@ class CRUD:
             #TODO - Logs
             print(e)
             raise
-            
+       
+    """Deletes device with `key`
+
+    Raises:
+        e: General Exception
+    """
     @classmethod
     def delete(cls, key: str, device_type: str):
         try:
             cls.db[device_type].delete_one({"key": key})
         except Exception as e:
             #TODO - Logs
-            raise
+            raise e
     

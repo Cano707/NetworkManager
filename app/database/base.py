@@ -6,6 +6,7 @@ import app.models
 from pymongo import MongoClient
 import sys
 
+"""Dummy Database """
 class Database(object):
     def __init__(self):
         self.db=None
@@ -33,10 +34,15 @@ class Database(object):
         with open(settings.DATABASE_PATH, "w") as db_handler:
             json.dump(self.db, db_handler, indent=4)
 
+
+"""Class connecting to database and implementing interfaces 
+to communicate with it"""
 class Mongo:
     def __init__(self):
         self.db=None
         
+    """_summary_
+    """
     def initialize(self):
         if self.db:
             return self.db

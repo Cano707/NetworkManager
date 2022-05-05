@@ -59,7 +59,8 @@ class ConnectCBV:
             connection_data=host_data[connection_type.value]
             if port:
                 connection_data["port"]=port
-            
+        
+        connection_data["log_file"]="app/logs/"+key+".log"
         try:
             #TODO - change type of port from int to str - check if it still works
             handler=Connector.connect(**connection_data)
