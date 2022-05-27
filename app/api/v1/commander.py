@@ -1,7 +1,7 @@
 from typing import Any, Dict, Tuple, Union
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
-from app.api.v1.handlers import Handlers
+from app.core.handlers import Handlers
 from app.database import db as db_handler
 import app.models
 from app.crud.crud import CRUD

@@ -29,8 +29,9 @@ class SerialCredentials(BaseModel):
 
 class Device(BaseModel):
     hostname: str = ""
-    vendor: str = ""
-    model: str = ""
+    vendor: Optional[str] = ""
+    model: Optional[str] = ""
+    autodetect: Optional[bool] = False
     secret: Optional[str] = ""
     config: Optional[list] = list()
     ssh: Optional[SSHCredentials] = SSHCredentials()

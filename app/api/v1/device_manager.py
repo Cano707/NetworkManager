@@ -19,30 +19,37 @@ class DeviceCBV:
     def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: app.schemas.Device):
         """Add device to database
 
-        Args:
+        **Args**:
+        
             key (str): Specifies device
             device_kind (app.models.DeviceKinds): Supported device kinds
             device (schemas.Device): Represents device object
 
-        Raises:
+        **Device**:
+        
+            Opts: `model`, `vendor`, `ssh`, `telnet`, `serial`
+            
+        
+        **Raises**:
+        
             Error: Raised in case of an unknown error
             HostAlreadyExists: Raised when `key` already exists
             VendorModelNotSupported: Raised if vendor and/or model are not supported
 
-        Returns:
+        **Returns**:
+        
             dict: {'detail': 'success'}
         """
         device=device.dict()
         vendor=device["vendor"]
         model=device["model"]
-        # Check if vendor and/or model are supported
-        if (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
+        if (vendor != "" and model != "") and \
+            (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
             model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
                 raise HTTPException(status_code=406, detail="VendorModelNotSupported")
+        elif (vendor == "" and model == ""):
+            pass
         try:
-            # Add device to database
-            #self.db[device_kind.value][key]=device
-            #db_handler.write()
             CRUD.create(key, device_kind.value, device)
             return {"detail": "success"}
         except HostAlreadyExistsException as e:

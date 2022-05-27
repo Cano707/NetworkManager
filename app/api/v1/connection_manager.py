@@ -5,7 +5,7 @@ from app.core import Connector
 from typing import Optional
 import app.schemas
 import app.models 
-from app.api.v1.handlers import Handlers
+from app.core.handlers import Handlers
 from app.crud.crud import CRUD
 
 connect_router=APIRouter()
