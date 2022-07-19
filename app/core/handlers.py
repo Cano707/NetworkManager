@@ -1,6 +1,6 @@
 import app.models
 
-class Handlers:
+class Handler:
     """Stores netmiko handlers to make them accessible
     from differnet locations.
     """

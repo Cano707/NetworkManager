@@ -1,23 +1,22 @@
 from typing import Any, Dict, Tuple, Union
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
-from app.core.handlers import Handlers
+from app.core.handlers import Handler
 from app.database import db as db_handler
 import app.models
 from app.crud.crud import CRUD
-import logging
+from app.core import DeviceLogger
 from os import path
+from datetime import datetime
 
 command_router=APIRouter()
 
-#TODO - Redo the whole fucking thing!
 #TODO - Refactoring
-#TODO - Plastic surgery
 #TODO - Exception handling
 @cbv(command_router)
 class CommandCBV:
     db: dict = Depends(db_handler.get_instance)
-    handlers: dict = Depends(Handlers.get_handlers)
+    handlers: dict = Depends(Handler.get_handlers)
     
     def __init__(self):
         pass
@@ -56,17 +55,11 @@ class CommandCBV:
         try:
             vendor, model = self.extract_vendor_model(key, device_kind)
         except Exception as e:
-            #TODO - Log
             print(e)
             raise
         model_command_map=app.models.device_vendor_mapping[device_kind.value][vendor][model].MAP
         model_command_types=list(model_command_map.keys())
         return {"detail": model_command_types}
-        
-        #host_details=self.get_host_details(key=key, device_kind=device_kind)
-        #model_command_map=app.models.device_vendor_mapping[device_kind.value][host_details["vendor"]][host_details["model"]].MAP
-        #model_command_types=list(model_command_map.keys())
-        #return {"detail": model_command_types}
     
     @command_router.get("/{device_kind}/{key}/{type}")
     def get_commands(self, key: str, device_kind: app.models.DeviceKinds, type: str) -> Dict[str, list]:
@@ -136,17 +129,7 @@ class CommandCBV:
 
         Returns:
             Dict[str, Any]: Result of `command`
-        """
-        # Initialize Logger for device
-        """
-        device_logger=logging.getLogger(key)
-        device_logger.setLevel(logging.DEBUG)
-        filehandler=logging.FileHandler(str(path.join(".", "app", "logs", f"{key}.log")))
-        device_logger.addHandler(filehandler)
-        formatter=logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(funcName)s:%(lineno)d — %(message)s")
-        filehandler.setFormatter(formatter)
-        """
-        
+        """        
         vendor, model=self.extract_vendor_model(key=key, device_kind=device_kind)
         commands=self.get_commands(key=key, device_kind=device_kind, type=type)["detail"]
         if command not in commands:
@@ -157,15 +140,16 @@ class CommandCBV:
             raise HTTPException(status_code=400, detail="InvalidArguments")
         
         try:
-            handler=self.handlers[device_kind.value][key]
+            handler=self.handlers[device_kind.value][key]["handler"]
         except KeyError:
             raise HTTPException(status_code=400, detail="NoConnection")
         
         function=command_details["func"]
         try:
             result=function(handler=handler, **args_opts)
+            log_msg = f"{datetime.now().strftime('%d.%m.%Y %H:%M:%S')} - command: {command} - params: {args_opts} "
+            DeviceLogger.write(key, log_msg)
         except Exception as e:
-            #TODO Logging
             print(e)
             raise HTTPException(status_code=500, detail="Exception")
         

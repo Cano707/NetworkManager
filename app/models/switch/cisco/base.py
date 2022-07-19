@@ -1,11 +1,12 @@
 import re
 from typing import List
-from app.models import CommandError
+#from app.models import CommandError
+from ciscoconfparse import CiscoConfParse
 
 #TODO - Yet to implement this.
 
 class CiscoBaseSwitch:
-    """basic switch"""
+    """basic"""
     
     """
     COMMON_ERRORS=["Invalid input detected at '^' marker."]
@@ -117,6 +118,51 @@ class CiscoBaseSwitch:
                         ports=[port.strip() for port in groups[0].split(",") if port]
                         vlan_table[root_vlan]["ports"].extend(ports)
         return vlan_table
+    
+    @classmethod
+    def show_running_config(cls, handler):
+        """running_config"""
+        command="show running-config"
+        cls.__reset_mode(handler)
+        res=cls.__send_command(handler, command)
+        if not res and not cls.__error_check(res):
+            #TODO - Log
+            return "failed"
+        res=res.split("\n")
+        return res
+    
+    @classmethod
+    def show_interfaces(cls, handler):
+        """interfaces"""
+        command="show running-config | begin interface" 
+        cls.__reset_mode(handler)  
+        res=cls.__send_command(handler, command)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        parsed_res=cls.show_interfaces_parser(res)
+        return parsed_res
+    
+    @staticmethod
+    def show_interfaces_stats_parser(data):
+        data=[s for s in data.splitlines() if s]
+        parser=CiscoConfParse(data)
+        NUM_PATTERN=r"(\d+(?:(?:[\/?|\.]?)(?:(?<=[\/|\.])\d*\.?\d*)?))"
+        INTERFACE_PATTERNS={"ethernet": r"^interface [Ee]thernet", "fastthernet": r"^interface [Ff]ast[Ee]thernet", "gigabitethernet": r"^interface [Gg]igabit[Ee]thernet"}
+        result={}
+        for interface_type, interface_pattern in INTERFACE_PATTERNS.items():
+            interface_result=dict()
+            interface_objs=parser.find_objects(interface_pattern)
+            for interface in interface_objs:
+                matches=re.search(NUM_PATTERN, interface.text)
+                key=matches.groups()[0]
+                interface_dict={"description": "", "switchport": {"mode": "", "vlan": ""}}
+                description=interface.re_match_iter_typed(r"description\s+(\w+)", default="")
+                switchport_mode=interface.re_match_iter_typed(r"switchport\s+mode\s+(\w+)", default="")
+                if switchport_mode=="trunk":
+                    pass
+                
+                switchport_vlan=interface.re_match_iter_typed(r"switchport\s+access\s+vlan\s+(\d+)")
+        
     
     #@classmethod
     #def configure_interface

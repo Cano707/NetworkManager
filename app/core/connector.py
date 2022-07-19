@@ -30,10 +30,12 @@ class Connector:
         handler = None 
         # For the time being, this will be needed until the bug in netmiko is fixed. 
         # Issue is, that `handler.enable()` raises an exception claiming that `secret`
-        # has not been given, although it has been. 
+        # has not been given, although it has been and a higher delay factor somehow 
+        # solves this. 
         kwargs["global_delay_factor"]=2
         kwargs["session_log"]="netmiko_session.log"
         try:
+            
             handler = netmiko.ConnectHandler(**kwargs)
         except Exception as e:
             print([f"[!] Exception: {e}"])

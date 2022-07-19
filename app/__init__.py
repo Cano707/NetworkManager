@@ -1,3 +1,1 @@
-import logging
-
-    
+LOG_DIR = "./app/logs"

@@ -12,16 +12,16 @@ class SSHCredentials(BaseModel):
     username: str = ""
     password: str = ""
     host: str = ""
-    port: str = ""
+    port: str = "22"
     device_type: str = ""
     
 class TelnetCredentials(BaseModel): 
     username: str = ""
     password: str = ""
     host: str = ""
-    port: str = ""
+    port: str = "23"
     device_type: str = ""
-    
+
 class SerialCredentials(BaseModel): 
     username: str = ""
     password: str = ""
@@ -29,9 +29,9 @@ class SerialCredentials(BaseModel):
 
 class Device(BaseModel):
     hostname: str = ""
+    autodetect: bool = False
     vendor: Optional[str] = ""
     model: Optional[str] = ""
-    autodetect: Optional[bool] = False
     secret: Optional[str] = ""
     config: Optional[list] = list()
     ssh: Optional[SSHCredentials] = SSHCredentials()

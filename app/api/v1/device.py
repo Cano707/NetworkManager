@@ -7,6 +7,7 @@ import app.schemas
 import app.models
 from app.crud import CRUD
 from app.crud.exceptions import HostAlreadyExistsException
+from app.core.autodetect import AutoDetector
 
 device_router=APIRouter()
 
@@ -43,12 +44,13 @@ class DeviceCBV:
         device=device.dict()
         vendor=device["vendor"]
         model=device["model"]
-        if (vendor != "" and model != "") and \
-            (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
-            model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
-                raise HTTPException(status_code=406, detail="VendorModelNotSupported")
-        elif (vendor == "" and model == ""):
+        if (device.autodetect):
+            vendor, model = AutoDetector.run(device)
             pass
+        elif (vendor != "" and model != "") and \
+            (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
+             model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
+                raise HTTPException(status_code=406, detail="VendorModelNotSupported")
         try:
             CRUD.create(key, device_kind.value, device)
             return {"detail": "success"}
@@ -56,9 +58,11 @@ class DeviceCBV:
             print(e)
             raise HTTPException(status_code=500, detail="HostAlreadyExists")
         except Exception as e:
-            
             print(e)
             raise HTTPException(status_code=500, detail="Error")
+        
+    
+        
         
     @device_router.delete("/{device_kind}/{key}")
     def delete_device(self, key: str, device_kind: app.models.DeviceKinds) -> Dict[str, str]:

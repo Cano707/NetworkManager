@@ -1,5 +1,7 @@
 from app.models.router import vendor_model_mapping as router_vendor_model_mapping
-from app.models.router import vendor_model_mapping as switch_vendor_model_mapping
+from app.models.switch import vendor_model_mapping as switch_vendor_model_mapping
+from app.models.router import autodetect_vendor_mapping as router_autodetect_vendor_model_mapping
+from app.models.switch import autodetect_vendor_mapping as switch_autodetect_vendor_model_mapping
 from enum import Enum
 
 
@@ -7,6 +9,12 @@ from enum import Enum
 device_vendor_mapping={
     "router": router_vendor_model_mapping,
     "switch": switch_vendor_model_mapping
+}
+
+# Autodeteect mapping
+autodetect_device_vendor_mapping={
+    "router": router_autodetect_vendor_model_mapping,
+    "switch": switch_autodetect_vendor_model_mapping
 }
 
 # Enum of supported vendors for FastAPI to use for verification.

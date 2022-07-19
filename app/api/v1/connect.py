@@ -5,8 +5,10 @@ from app.core import Connector
 from typing import Optional
 import app.schemas
 import app.models 
-from app.core.handlers import Handlers
+from app.core.handlers import Handler
 from app.crud.crud import CRUD
+from app.core import autodetect
+from app.core import DeviceLogger
 
 connect_router=APIRouter()
 
@@ -15,7 +17,8 @@ connect_router=APIRouter()
 @cbv(connect_router)
 class ConnectCBV:
     db: dict = Depends(db_handler.get_instance) #CRUD instead
-    handlers: dict = Depends(Handlers.get_handlers)
+    handlers: dict = Depends(Handler.get_handlers)
+    loggers: dict = Depends(DeviceLogger.get_loggers)
 
     @connect_router.get("/serial-ports")
     def get_serial_ports(self):
@@ -49,6 +52,9 @@ class ConnectCBV:
         if not host_data:
             raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         
+        if not host_data.vendor and not host_data.model:
+            """Autodetect"""
+        
         if connection_type.value == "serial":
             if port not in Connector.list_serial_ports():
                 raise HTTPException(status_code=406, detail="PortDoesNotExistException")  
@@ -60,14 +66,15 @@ class ConnectCBV:
             if port:
                 connection_data["port"]=port
         
-        connection_data["log_file"]="app/logs/"+key+".log"
         try:
             #TODO - change type of port from int to str - check if it still works
             handler=Connector.connect(**connection_data)
+            self.loggers.open(key, key+".log")
         except Exception as e:
+            #logging_stream_handler.error("Could not establish connection.")
             raise HTTPException(status_code=500, detail="Exception")
         
-        self.handlers[device_kind.value][key]=handler
+        self.handlers[device_kind.value][key]["handler"]=handler
         return {"detail": "success"}
     
     @connect_router.post("/{device_kind}/{key}")
@@ -88,7 +95,7 @@ class ConnectCBV:
         if not key in self.handlers[device_kind.value].keys():
             raise HTTPException(status_code=406, detail="HandlerNotFound")
         try:
-            self.handlers[device_kind.value][key].disconnect()
+            self.handlers[device_kind.value][key]["handler"].disconnect()
             self.handlers[device_kind.value].pop(key)
             return {"detail": "success"}
         except Exception as e:

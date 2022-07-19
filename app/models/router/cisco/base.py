@@ -14,7 +14,7 @@ from ciscoconfparse import CiscoConfParse
 
 #TODO - Different OS means different cmds. Does each Series only have one OS or can they differ?
 class CiscoBaseRouter:
-    """basic router"""
+    """base"""
     
     """
     COMMON_ERRORS=["Invalid input detected at '^' marker."]

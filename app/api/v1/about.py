@@ -4,9 +4,6 @@ import app.models
 
 info_router=APIRouter()
 
-
-#TODO - Exception Handling
-#TODO - Refactoring
 @cbv(info_router)
 class AboutCBV:
     """Represents API endpoints for `about`."""
