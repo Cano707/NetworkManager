@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Union
 #from app.models import CommandError
 from ciscoconfparse import CiscoConfParse
 
@@ -176,19 +176,268 @@ class CiscoBaseSwitch:
             result[interface_type]=interface_result
         return result
     
-
+    @classmethod
+    def configure_interface_description(cls, handler, interface_type, interface_id, description):
+        """interface_description"""
+        commands=[
+            f"interface {interface_type}{interface_id}", 
+            f"description {description}"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
     
+    @classmethod
+    def configure_shutdown_interface(cls, handler, interface_type: str, interface_id: str, shutdown: bool):
+        """interface_shutdown"""
+        commands=[
+            f"interface {interface_type}{interface_id}",
+            "shutdown" if shutdown else "no shutdown"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def configure_switchport_access(cls, handler, interface_type: str, interface_id: str, vlan: str): 
+        """switchport_access"""
+        commands=[
+            f"interface {interface_type}{interface_id}",
+            "switchmode mode accesss", 
+            f"switchport access vlan {vlan}"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def configure_switchport_trunk(cls, handler, interface_type: str, interface_id: str, native_vlan: str):
+        """switchport_trunk"""
+        commands=[
+            f"interface {interface_type}{interface_id}",
+            "switchmode mode trunk", 
+            f"switchport trunk native vlan {native_vlan}"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def upload_running_config(cls, handler, running_config: List[str]):
+        """upload_running_config"""
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, running_config)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"  
+    
+    @classmethod
+    def copy(cls, handler, source: str, source_file: str, destination: str, destination_file: str):
+        """copy"""
+        """Copy from `source` to `destination`"""
+        if source_file=="running-config" or source=="running-config" or source=="startup-config" or source_file=="startup-config":
+            source_string=f"{source if source else source_file}"
+        else:
+            source_string=f"{source}:{source_file}"
+        
+        if destination_file=="running-config" or destination=="running-config" or destination_file=="startup-config" or destination=="startup-config":
+            destionation_string=f"{destination if destination else destination_file}"
+        else:
+            destionation_string=f"{destination}:{destination_file}"
+        
+        command=[
+            f"copy {source_string} {destionation_string}",
+            f"{destination_file}",
+            f"n"
+            ]
+        
+        cls.__reset_mode(handler)
+        cls.__write_channel(handler, command)
+        
+        # Error check not needed
+        return "success"
+    
+    @classmethod
+    def store_running_config_to_database(cls, handler):
+        """store_running_config_to_database"""
+        res=cls.show_running_config(handler)
+        return res
+    
+    @classmethod
+    def custom_config_command(cls, handler, command):
+        """custom_config_command"""
+        res=cls.__send_config_set(handler, [command])
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+    
+    @classmethod
+    def configure_hostname(cls, handler, hostname):
+        """hostname"""
+        commands=[
+            f"hostname {hostname}"
+        ]
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return hostname
+    
+    @classmethod
+    def upload_running_config(cls, handler, running_config: List[str]):
+        """upload_running_config"""
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, running_config)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"   
+    
+    @classmethod
+    def copy(cls, handler, source: str, source_file: str, destination: str, destination_file: str):
+        """copy"""
+        """Copy from `source` to `destination`"""
+        if source_file=="running-config" or source=="running-config" or source=="startup-config" or source_file=="startup-config":
+            source_string=f"{source if source else source_file}"
+        else:
+            source_string=f"{source}:{source_file}"
+        
+        if destination_file=="running-config" or destination=="running-config" or destination_file=="startup-config" or destination=="startup-config":
+            destionation_string=f"{destination if destination else destination_file}"
+        else:
+            destionation_string=f"{destination}:{destination_file}"
+        
+        command=[
+            f"copy {source_string} {destionation_string}",
+            f"{destination_file}",
+            f"n"
+            ]
+        
+        cls.__reset_mode(handler)
+        cls.__write_channel(handler, command)
+        
+        # Error check not needed
+        return "success"
+    
+    @classmethod
+    def store_running_config_to_database(cls, handler):
+        """store_running_config_to_database"""
+        res=cls.show_running_config(handler)
+        return res
+    
+    @classmethod
+    def custom_config_command(cls, handler, command):
+        """custom_config_command"""
+        res=cls.__send_config_set(handler, [command])
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+
+
+#TODO - Show running_config write to db - or not - maybe the user does not want to write to db
 CiscoBaseSwitch.MAP={
     "show": {
         CiscoBaseSwitch.show_version.__doc__: {
             "func": CiscoBaseSwitch.show_version,
+            "info": "",
             "args": list(),
-            "opts": list()
+            "opts": list(),
+            "db": {"write": False, "field": ""}
         },
         CiscoBaseSwitch.show_vlans.__doc__: {
             "func": CiscoBaseSwitch.show_vlans,
+            "info": "",
             "args": list(),
-            "opts": list()
-            }
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+            },
+        CiscoBaseSwitch.show_running_config.__doc__: {
+            "func": CiscoBaseSwitch.show_running_config,
+            "info": "",
+            "args": list(),
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.show_interfaces.__doc__: {
+            "func": CiscoBaseSwitch.show_interfaces,
+            "info": "",
+            "args": list(),
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        }
+    }, 
+    "configure": {
+        CiscoBaseSwitch.configure_interface_description.__doc__: {
+            "func": CiscoBaseSwitch.configure_interface_description,
+            "info": "",
+            "args": ["interface_type", "interface_id", "description"],
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.configure_shutdown_interface.doc__: {
+            "func": CiscoBaseSwitch.configure_shutdown_interface,
+            "info": "",
+            "args": ["interface_type", "interface_id", "shutdown"],
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.configure_switchport_access.__doc__: {
+            "func": CiscoBaseSwitch.configure_switchport_access,
+            "info": "",
+            "args": ["interface_type", "interface_id", "vlan"],
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.configure_switchport_trunk.__doc__: {
+            "func": CiscoBaseSwitch.configure_switchport_trunk,
+            "info": "",
+            "args": ["interface_type", "interface_id", "native_vlan"],
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.configure_hostname.__doc__: {
+            "func": CiscoBaseSwitch.configure_hostname,
+            "info": "Reconnect to the device after execution!",
+            "args": ["hostname"],
+            "opts": list(), 
+            "db": {"write": True, "field": "hostname"} 
+        }
+    },
+    "general": {
+        CiscoBaseSwitch.custom_config_command.__doc__: {
+            "func" : CiscoBaseSwitch.custom_config_command,
+            "info": "",
+            "args" : list(),
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.copy.__doc__: {
+            "func" : CiscoBaseSwitch.copy,
+            "info": "",
+            "args" : ["source", "source_file", "destination", "destination_file"],
+            "opts": list(),
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.upload_running_config.__doc__: {
+            "func": CiscoBaseSwitch.upload_running_config,
+            "info": "",
+            "args": ["running_config"],
+            "opts": list(), 
+            "db": {"write": False, "field": ""}
+        },
+        CiscoBaseSwitch.store_running_config_to_database.__doc__: {
+            "func": CiscoBaseSwitch.store_running_config_to_database,
+            "info": "",
+            "args": list(),
+            "opts": list(),
+            "db": {"write": True, "field": "config"}
+        }
     }
 }

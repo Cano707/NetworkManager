@@ -280,6 +280,7 @@ class CiscoBaseRouter:
             return "failed"
         return "succeeded"
     
+    """
     @classmethod
     def ssh(cls, handler, domain_name, modulus_bits=1024, ):
         commands=['ip domain-name FH', 
@@ -291,6 +292,7 @@ class CiscoBaseRouter:
                   'transport input ssh', 
                   'exit', 
                   'ip ssh version {}']
+    """
 
         
     
