@@ -143,11 +143,12 @@ class CiscoBaseSwitch:
         return parsed_res
     
     @staticmethod
-    def show_interfaces_stats_parser(data):
+    def show_interfaces_parser(data):
         data=[s for s in data.splitlines() if s]
         parser=CiscoConfParse(data)
         NUM_PATTERN=r"(\d+(?:(?:[\/?|\.]?)(?:(?<=[\/|\.])\d*\.?\d*)?))"
         INTERFACE_PATTERNS={"ethernet": r"^interface [Ee]thernet", "fastthernet": r"^interface [Ff]ast[Ee]thernet", "gigabitethernet": r"^interface [Gg]igabit[Ee]thernet"}
+        ALLOWED_VLAN_PATTERN=r"(?:(\d+(?:\-\d*)?))+"
         result={}
         for interface_type, interface_pattern in INTERFACE_PATTERNS.items():
             interface_result=dict()
@@ -155,17 +156,27 @@ class CiscoBaseSwitch:
             for interface in interface_objs:
                 matches=re.search(NUM_PATTERN, interface.text)
                 key=matches.groups()[0]
-                interface_dict={"description": "", "switchport": {"mode": "", "vlan": ""}}
+                interface_dict={"description": "", "switchport": None}
                 description=interface.re_match_iter_typed(r"description\s+(\w+)", default="")
+                interface_dict["description"]=description
                 switchport_mode=interface.re_match_iter_typed(r"switchport\s+mode\s+(\w+)", default="")
+                if switchport_mode=="access":
+                    vlan=interface.re_match_iter_typed(r"switchport\s+access\s+vlan\s+(\d+)", default="")
+                    switchport_dict={"mode": switchport_mode, "vlan": vlan}
+                    interface_dict["switchport"]=switchport_dict
                 if switchport_mode=="trunk":
-                    pass
-                
-                switchport_vlan=interface.re_match_iter_typed(r"switchport\s+access\s+vlan\s+(\d+)")
-        
+                    native_vlan=interface.re_match_iter_typed(r"switchport\s+trunk\s+native\s+vlan\s+(\d+)", default="")
+                    allowed_vlans_line=interface.re_match_iter_typed(r"(switchport\s+trunk\s+allowed\s+vlan\s+.*)", default="")
+                    allowed_vlans=list()
+                    if allowed_vlans_line:
+                        allowed_vlans=re.findall(ALLOWED_VLAN_PATTERN, allowed_vlans_line)
+                    switchport_dict={"mode": "trunk", "native_vlan": native_vlan, "allowed_vlans": ",".join(allowed_vlans)}
+                    interface_dict["switchport"]=switchport_dict
+                interface_result[key]=interface_dict
+            result[interface_type]=interface_result
+        return result
     
-    #@classmethod
-    #def configure_interface
+
     
 CiscoBaseSwitch.MAP={
     "show": {
