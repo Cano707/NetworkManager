@@ -30,3 +30,9 @@ Ein beispielhafter Eintrag innerhalb der Collection `router` könnte wie folgt a
 ```
 
 Hier ist die _id ein von MongoDB automatisch generierter Key, der für unsere Zwecke keine festgelegte Rolle spielt. Das Feld `key` ist der vom Nutzer eindeutig definierte Schlüssel für die sogennanten `documents` bzw. für die Geräte. Die derzeitige Konfiguration des Gerätes wird unter dem Schlüssen `config` als eine Liste vom Strings hinterlegt. Der Hostname, das Model, der Hersteller (engl. Vendor) und das Secret werden in den gleichnamigen Feldern gespeichert.  Informationen bzgl. der Herstellung von Verbindungen werden in einem seperaten `document` und diese wiederum verschachtelt in den bestehenden Eintrag unter dem key hinterlegt, die dem Verbindungstyp entspricht. 
+
+
+
+
+
+MongoDB - JSON --> FastAPI - JSON

@@ -381,7 +381,7 @@ CiscoBaseSwitch.MAP={
             "opts": list(),
             "db": {"write": False, "field": ""}
         },
-        CiscoBaseSwitch.configure_shutdown_interface.doc__: {
+        CiscoBaseSwitch.configure_shutdown_interface.__doc__: {
             "func": CiscoBaseSwitch.configure_shutdown_interface,
             "info": "",
             "args": ["interface_type", "interface_id", "shutdown"],

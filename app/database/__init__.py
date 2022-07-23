@@ -1,1 +1,3 @@
-from app.database.base import db
+from app.database.base import Connection
+
+db=Connection()

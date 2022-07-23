@@ -6,3 +6,4 @@ class Cisco2911(CiscoBaseRouter):
 Cisco2911.MAP = {
     **CiscoBaseRouter.MAP
 }
+

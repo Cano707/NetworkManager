@@ -52,8 +52,6 @@ class ConnectCBV:
         if not host_data:
             raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         
-        if not host_data.vendor and not host_data.model:
-            """Autodetect"""
         
         if connection_type.value == "serial":
             if port not in Connector.list_serial_ports():

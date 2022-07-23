@@ -9,14 +9,13 @@ class CRUD:
     def __init__(self):
         pass
     
-    
-    """Creates an entry for a device
-
-    Raises:
-        HostAlreadyExistsException: Raised if the `key` already exists.
-    """
     @classmethod
     def create(cls, key: str, device_type: str, device: dict): # device_type schemas.deviceTyüe
+        """Creates an entry for a device
+
+        Raises:
+            HostAlreadyExistsException: Raised if the `key` already exists.
+        """
         data={"key":key, **device}
         try:
             res=cls.db[device_type].update_one({"key": key}, {"$setOnInsert": data}, upsert=True)
@@ -29,13 +28,13 @@ class CRUD:
             raise HostAlreadyExistsException()
         
         
-    """Reads and returns device with `key`
-
-    Returns:
-        Union[dict, None]: Returns dict with device data or None if device does not exist.
-    """
     @classmethod
     def read(cls, key: str, device_type: str) -> Union[dict, None]:
+        """Reads and returns device with `key`
+
+        Returns:
+            Union[dict, None]: Returns dict with device data or None if device does not exist.
+        """
         try:
             data=cls.db[device_type].find_one({"key": key})
         except Exception as e:
@@ -43,13 +42,13 @@ class CRUD:
             raise
         return data
         
-    """Reads and returns all devices of type `device_type`
-
-    Returns:
-        List[dict]: List of all devices as dicts
-    """
     @classmethod
     def read_collection(cls, device_type: str) -> List[dict]:
+        """Reads and returns a collection
+
+        Returns:
+            Union[dict, None]: Returns a list with the collection
+        """
         try:
             res=cls.db[device_type].find()
         except Exception as e:
@@ -59,9 +58,14 @@ class CRUD:
         return res
     
 
-    """Updates an existing device"""
+    
     @classmethod
-    def update(cls, key: str, device_type: str, device: dict):
+    def update(cls, key: str, device_type: str, device: dict): # -> Noreturn
+        """Updates an existing device
+
+        Returns:
+            --
+        """
         update_device=dict()
         for field, value in device.items():
             if type(value) is dict:
@@ -76,13 +80,14 @@ class CRUD:
             print(e)
             raise
        
-    """Deletes device with `key`
-
-    Raises:
-        e: General Exception
-    """
+    
     @classmethod
     def delete(cls, key: str, device_type: str):
+        """Deletes device with `key`
+
+        Raises:
+            e: General Exception
+        """
         try:
             cls.db[device_type].delete_one({"key": key})
         except Exception as e:

@@ -1,20 +1,19 @@
 from typing import Dict
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
-from app.database import db as db_handler
 import app.schemas
 #from app.models import device_vendor_mapping
 import app.models
 from app.crud import CRUD
 from app.crud.exceptions import HostAlreadyExistsException
 from app.core.autodetect import AutoDetector
+from app.core.exceptions import MissingConnectionData, ConnectionError
 
 device_router=APIRouter()
 
 @cbv(device_router)
 class DeviceCBV:
     """Represents API endpoints for the device manager."""
-    #db: dict = Depends(db_handler.get_instance)
     
     @device_router.post("/{device_kind}/{key}")
     def add_device(self, key: str, device_kind: app.models.DeviceKinds, device: app.schemas.Device):
@@ -29,7 +28,7 @@ class DeviceCBV:
         **Device**:
         
             Opts: `model`, `vendor`, `ssh`, `telnet`, `serial`
-            
+                
         
         **Raises**:
         
@@ -45,8 +44,13 @@ class DeviceCBV:
         vendor=device["vendor"]
         model=device["model"]
         if (device.autodetect):
-            vendor, model = AutoDetector.run(device)
-            pass
+            try:
+                vendor, model = AutoDetector.run(device, device_kind)
+            except MissingConnectionData as e:
+                raise HTTPException(status_code=406, detail="MissingConnectionData")
+            except ConnectionError as e:
+                raise HTTPException(status_code=406, detail="ConnectionError")
+            
         elif (vendor != "" and model != "") and \
             (vendor not in app.models.device_vendor_mapping[device_kind.value] or 
              model not in app.models.device_vendor_mapping[device_kind.value][vendor]):
@@ -79,7 +83,6 @@ class DeviceCBV:
             dict: {'detail': 'success'} if operation was successful 
         """
         try:
-            #self.db[device_kind.value].pop(key)
             CRUD.delete(key, device_kind.value)
             return {"detail": "success"}
         except Exception as e:
@@ -101,21 +104,17 @@ class DeviceCBV:
         Returns:
             dict: {'detail': 'success'} if operation was successful 
         """
-        #if key in self.db[device_kind.value]:
-        #    raise HTTPException(status_code=406, detail="HostDoesNotExistException")
         update_device=dict()
         try:
             for device_key, value in device.dict().items():
                 # Update only those attributes of received device, if those are of type str.
                 if type(value) is str and value:
-                    #self.db[device_kind.value][key][subkey]=value   
                     update_device[device_key]=value
                 elif type(value) is dict:
                     update_device[device_key]=dict()
                     for subkey, subvalue in value.items():
                         if type(subvalue) is str and subvalue:
                             update_device[device_key][subkey]=subvalue
-            #db_handler.write()
             CRUD.update(key, device_kind.value, update_device)
             return {"detail": "success"}
         except Exception as e:
@@ -138,11 +137,7 @@ class DeviceCBV:
         Returns:
             dict: Specified device
         """
-        #if key in self.db[device_kind]:
-        #    raise HTTPException(status_code=406, detail="DeviceDoesNotExistException")
         try:
-            #return self.db[device_kind.value][key]
-            
             data=CRUD.read(key, device_kind.value)
             data.pop("_id")
             return data
@@ -164,7 +159,6 @@ class DeviceCBV:
             dict: All stored devices of `device_kind`
         """
         try:
-            #return self.db[device_kind.value]
             data=CRUD.read_collection(device_kind.value)
             for device in data:
                 device.pop("_id")

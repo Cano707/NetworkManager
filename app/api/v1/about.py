@@ -2,12 +2,12 @@ from fastapi import APIRouter, HTTPException
 from fastapi_utils.cbv import cbv
 import app.models
 
-info_router=APIRouter()
+about_router=APIRouter()
 
-@cbv(info_router)
+@cbv(about_router)
 class AboutCBV:
-    """Represents API endpoints for `about`."""
-    @info_router.get("/")
+    """Represents API endpoints for `/api/v1/about/`."""
+    @about_router.get("/")
     def supported_devices(self):
         """Returns supported device kinds.
 
@@ -17,7 +17,7 @@ class AboutCBV:
         devices=list(app.models.device_vendor_mapping.keys())
         return {"detail": devices}
     
-    @info_router.get("/{device_kind}")
+    @about_router.get("/{device_kind}")
     def supported_vendors(self, device_kind: app.models.DeviceKinds):
         """Returns supported vendors for `device_kind`
 
@@ -30,7 +30,7 @@ class AboutCBV:
         vendors=list(app.models.device_vendor_mapping[device_kind.value].keys())
         return {"detail": vendors}
     
-    @info_router.get("/{device_kind}/{vendor}")
+    @about_router.get("/{device_kind}/{vendor}")
     def supported_vendor_models(self, device_kind: app.models.DeviceKinds, vendor: app.models.Vendors):
         """Returns supported models for `vendor` of `device_kind`
 
