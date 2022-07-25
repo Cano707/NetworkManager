@@ -3,6 +3,7 @@ from typing import List, Union
 from ciscoconfparse import CiscoConfParse
 
 
+
 #TODO - Check if channel is free to use
 
 #TODO - Is it better to return to the priv. EXEC mode after each method or to check everything...
@@ -32,7 +33,6 @@ class CiscoBaseRouter:
         """reset_mode"""
         handler.enable()
         if handler.check_config_mode():
-            print("EXISING CONFIG MODE")
             handler.exit_config_mode()
         
             
@@ -45,13 +45,27 @@ class CiscoBaseRouter:
         return False
     
     @classmethod
-    def __send_config_set(cls, handler, commands) -> str:
+    def __send_config_set(cls, handler, commands):
+        res=handler.send_config_set(commands)
+        return res
+        
+    @classmethod
+    def send_config_set(cls, handler, commands):
+        """
+        cls.__reset_mode(handler)
+        res=cls.__send_config_set(handler, commands)
+        if not res and not cls.__error_check(res):
+            return "failed"
+        return "succeeded"
+        """
         try:
-            res=handler.send_config_set(commands)
-            return res
+            cls.__reset_mode(handler)
+            res=cls.__send_config_set(handler, commands)
+            if not res and not cls.__error_check(res):
+                raise
         except Exception as e:
-            #TODO - Logging
             return False
+        return True
         
     @classmethod    
     def __send_command(cls, handler, commands: Union[str, list]) -> Union[str, bool]:
@@ -62,6 +76,9 @@ class CiscoBaseRouter:
                 for command in commands:
                     print(f"SENDING {command}")
                     res=handler.send_command(command)
+            else:
+                raise TypeError        
+            
             return res
         except Exception as e:
             #TODO - Logging
@@ -104,26 +121,30 @@ class CiscoBaseRouter:
         return version
     
     @classmethod
-    def show_running_config(cls, handler):
-        """running_config"""
-        command="show running-config"
+    def send_command(cls, handler, command):
         cls.__reset_mode(handler)
         res=cls.__send_command(handler, command)
         if not res and not cls.__error_check(res):
             #TODO - Log
-            return "failed"
-        res=res.split("\n")
+            return False
+        return res
+    
+    @classmethod
+    def show_running_config(cls, handler):
+        """running_config"""
+        command="show running-config"
+
+        ret=cls.send_command(handler, command)
+        res=res.split("\n") if ret else "failed"
         return res
     
     @classmethod
     def show_ipv4_route(cls, handler):
         """ipv4_route"""
         command="show ip route"
-        cls.__reset_mode(handler)
-        res=cls.__send_command(handler, command)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        parsed_res=cls.show_ipv4_route_parser(res)
+        
+        ret=cls.send_command(handler, command)
+        parsed_res=cls.show_ipv4_route_parser(ret) if ret else "failed"
         return parsed_res
         
     @staticmethod
@@ -146,11 +167,9 @@ class CiscoBaseRouter:
     def show_interfaces(cls, handler) -> str:
         """interfaces"""
         command="show running-config | begin interface" 
-        cls.__reset_mode(handler)  
-        res=cls.__send_command(handler, command)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        parsed_res=cls.show_interfaces_parser(res)
+
+        ret=cls.send_command(handler, command)
+        parsed_res=cls.show_interfaces_parser(ret) if ret else "failed"
         return parsed_res
     
     @staticmethod
@@ -187,11 +206,8 @@ class CiscoBaseRouter:
             f"interface {interface_type}{interface_id}",
             f"ip address {ip} {subnet}"
             ]
-        cls.__reset_mode(handler)
-        res=cls.__send_config_set(handler, commands)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        return "succeeded"
+        return "succeeded" if cls.send_config_set(handler, commands) else "failed"
+        
     
     @classmethod
     def configure_shutdown_interface(cls, handler, interface_type: str, interface_id: str, shutdown: bool):
@@ -200,11 +216,8 @@ class CiscoBaseRouter:
             f"interface {interface_type}{interface_id}",
             "shutdown" if shutdown else "no shutdown"
         ]
-        cls.__reset_mode(handler)
-        res=cls.__send_config_set(handler, commands)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        return "succeeded"
+        return "succeeded" if cls.send_config_set(handler, commands) else "failed"
+        
     
     @classmethod
     def configure_interface_description(cls, handler, interface_type, interface_id, description):
@@ -213,11 +226,8 @@ class CiscoBaseRouter:
             f"interface {interface_type}{interface_id}",
             f"description {description}"
             ]
-        cls.__reset_mode(handler)
-        res=cls.__send_config_set(handler, commands)
-        if not res and not cls.__error_check(res): # and not cls.__error_check
-            return "failed"
-        return "succeeded"
+        return "succeeded" if cls.send_config_set(handler, commands) else "failed"
+        
         
     @classmethod
     def configure_hostname(cls, handler, hostname):
@@ -225,46 +235,22 @@ class CiscoBaseRouter:
         commands=[
             f"hostname {hostname}"
         ]
-        cls.__reset_mode(handler)
-        res=cls.__send_config_set(handler, commands)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        return hostname
+        return "succeeded" if cls.send_config_set(handler, commands) else "failed"
+        
     
     @classmethod
     def upload_running_config(cls, handler, running_config: List[str]):
         """upload_running_config"""
-        cls.__reset_mode(handler)
-        res=cls.__send_config_set(handler, running_config)
-        if not res and not cls.__error_check(res):
-            return "failed"
-        return "succeeded"    
-    
+        return "succeeded" if cls.send_config_set(handler, running_config) else "failed"
+        
     @classmethod
-    def copy(cls, handler, source: str, source_file: str, destination: str, destination_file: str):
+    def copy_running_config_to_startup_config(cls, handler):
         """copy"""
         """Copy from `source` to `destination`"""
-        if source_file=="running-config" or source=="running-config" or source=="startup-config" or source_file=="startup-config":
-            source_string=f"{source if source else source_file}"
-        else:
-            source_string=f"{source}:{source_file}"
-        
-        if destination_file=="running-config" or destination=="running-config" or destination_file=="startup-config" or destination=="startup-config":
-            destionation_string=f"{destination if destination else destination_file}"
-        else:
-            destionation_string=f"{destination}:{destination_file}"
-        
-        command=[
-            f"copy {source_string} {destionation_string}",
-            f"{destination_file}",
-            f"n"
-            ]
-        
-        cls.__reset_mode(handler)
-        cls.__write_channel(handler, command)
-        
-        # Error check not needed
-        return "success"
+        command="copy running-config startup-config"
+            
+        ret=cls.send_command(handler, command)
+        return "succeeded" if ret else "failed"
     
     @classmethod
     def store_running_config_to_database(cls, handler):
@@ -280,20 +266,6 @@ class CiscoBaseRouter:
             return "failed"
         return "succeeded"
     
-    """
-    @classmethod
-    def ssh(cls, handler, domain_name, modulus_bits=1024, ):
-        commands=['ip domain-name FH', 
-                  'crypto key generate rsa', 
-                  {}, 
-                  'username {} password {}', 
-                  'line vty {} {}', 
-                  'login {}', 
-                  'transport input ssh', 
-                  'exit', 
-                  'ip ssh version {}']
-    """
-
         
     
 CiscoBaseRouter.MAP = {
@@ -310,21 +282,21 @@ CiscoBaseRouter.MAP = {
             "info": "",
             "args": list(),
             "opts": list(), 
-            "db": {"write": False, "field": ""}
+            "db": {"write": True, "field": "ipv4_route"}
         },
         CiscoBaseRouter.show_interfaces.__doc__: {
             "func": CiscoBaseRouter.show_interfaces,
             "info": "",
             "args": list(),
             "opts": list(), 
-            "db": {"write": False, "field": ""}
+            "db": {"write": True, "field": "interfaces"}
         },
         CiscoBaseRouter.show_running_config.__doc__: {
             "func": CiscoBaseRouter.show_running_config,
             "info": "",
             "args": list(),
             "opts": list(), 
-            "db": {"write": False, "field": ""}
+            "db": {"write": True, "field": "config"}
         }
     },
     "configure": {
@@ -366,8 +338,8 @@ CiscoBaseRouter.MAP = {
             "opts": list(),
             "db": {"write": False, "field": ""}
         },
-        CiscoBaseRouter.copy.__doc__: {
-            "func" : CiscoBaseRouter.copy,
+        CiscoBaseRouter.copy_running_config_to_startup_config.__doc__: {
+            "func" : CiscoBaseRouter.copy_running_config_to_startup_config,
             "info": "",
             "args" : ["source", "source_file", "destination", "destination_file"],
             "opts": list(),

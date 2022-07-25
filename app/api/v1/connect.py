@@ -46,7 +46,7 @@ class ConnectCBV:
             PortDoesNotExistException: Raised if port is not available on server
 
         Returns:
-            dict: success
+            dict : result 
         """
         host_data=CRUD.read(key, device_kind.value)
         if not host_data:
@@ -69,7 +69,6 @@ class ConnectCBV:
             handler=Connector.connect(**connection_data)
             self.loggers.open(key, key+".log")
         except Exception as e:
-            #logging_stream_handler.error("Could not establish connection.")
             raise HTTPException(status_code=500, detail="Exception")
         
         self.handlers[device_kind.value][key]["handler"]=handler
