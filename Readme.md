@@ -6,7 +6,7 @@ It is no longer maintained.
 
 # Usage
 
-The service starts an local http server on port 8080.
+The service starts a local http server on port 8080.
 
 The following command should be run from the root directory
 
