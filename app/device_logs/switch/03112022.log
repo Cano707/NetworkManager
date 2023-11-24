@@ -1,0 +1,2698 @@
+
+Switch>
+Switch>
+Switch>terminal width 511
+Switch>terminal length 0
+Switch>
+Switch>
+Switch>enable
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1, Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/7, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+
+40   TEST                             active    
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+
+Current configuration : 1992 bytes
+!
+version 12.2
+no service pad
+
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+
+Switch#
+Switch#
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#vlan 30
+Switch(config-vlan)#name DREIZIG
+Switch(config-vlan)#exit
+Switch(config)#
+Switch(config)#end
+Switch#
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1, Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/7, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42
+*Mar  1 00:57:59.519: %SYS-5-CONFIG_I: Configured from console by console, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    
+40   TEST                             active    
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1, Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/7, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    
+40   TEST                             active    
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+Current configuration : 1992 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+Switch#
+
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#interface gigabitethernet0/1
+
+Switch(config-if)#description TEST
+Switch(config-if)#
+
+Switch(config-if)#end
+Switch#
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+
+*Mar  1 00:59:01.057: %SYS-5-CONFIG_I: Configured from console by consoleinterface GigabitEthernet0/1
+ description TEST
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/1, Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/7, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    
+40   TEST                             active    
+99   MNG                              active    
+
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+Current configuration : 2010 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+!
+!
+!
+
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+ description TEST
+
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+ description TEST
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#interface gigabitethernet0/1
+Switch(config-if)#switchport mode access
+
+Switch(config-if)#no shutdown
+Switch(config-if)#
+Switch(config-if)#end
+Switch#
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+ description TEST
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+i
+*Mar  1 01:00:14.986: %SYS-5-CONFIG_I: Configured from console by consolenterface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#
+
+Switch(config)#
+Switch(config)#
+Switch(config)#end
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#interface Gig0/1
+Switch(config-if)#switchport access vlan 30
+Switch(config-if)#
+Switch(config-if)#end
+Switch#
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+
+
+*Mar  1 01:02:25.630: %SYS-5-CONFIG_I: Configured from console by console
+*Mar  1 01:02:25.983: %SYS-5-CONFIG_I: Configured from console by consoleinterface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/7, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    Gi0/1
+40   TEST                             active    
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+Current configuration : 2061 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+!
+!
+!
+
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+Switch#
+Switch#
+Switch#configure terminal
+
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#vlan 98
+Switch(config-vlan)#name MANAGEMENT
+Switch(config-vlan)#exit
+Switch(config)#interface vlan98
+
+Switch(config-if)#ip address 4.4.4.5 255.255.255.0
+Switch(config-if)#no shutdown
+Switch(config-if)#interface gigabitethernet0/7
+Switch(config-if)#switchport access vlan 98
+Switch(config-if)#no shutdown
+Switch(config-if)#exit
+Switch(config)#
+Switch(config)#end
+Switch#
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+*Mar  1 01:06:13.238: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan98, changed state to down
+*Mar  1 01:06:13.633: %SYS-5-CONFIG_I: Configured from console by console
+Current configuration : 2141 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+!
+
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+
+interface Vlan1
+ no ip address
+!
+interface Vlan98
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    Gi0/1
+40   TEST                             active    
+98   MANAGEMENT                       active    Gi0/7
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+Current configuration : 2141 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+!
+
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan98
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+
+interface Vlan98
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 5 15
+
+!
+end
+
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#line vty 0 4
+Switch(config-line)#password admin
+Switch(config-line)#transport input ssh
+Switch(config-line)#login
+Switch(config-line)#
+Switch(config-line)#end
+Switch#
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface Gig
+*Mar  1 01:10:09.696: %SYS-5-CONFIG_I: Configured from console by consoleabitEthernet0/28
+!
+interface GigabitEthernet0/29
+
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan98
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 0 4
+ password admin
+ login
+ transport input ssh
+line vty 5 15
+ login
+!
+end
+
+Switch#
+Switch#enable
+Switch#
+Switch#
+Switch#
+Switch#show running-config | include hostname
+hostname Switch
+Switch#
+Switch#
+Switch#
+Switch#show interfaces trunk
+
+Switch#
+Switch#
+Switch#
+Switch#show version | include Version
+Cisco IOS Software, C2960 Software (C2960-LANBASEK9-M), Version 12.2(55)SE9, RELEASE SOFTWARE (fc1)
+BOOTLDR: C2960 Boot Loader (C2960-HBOOT-M) Version 12.2(44)SE5, RELEASE SOFTWARE (fc1)
+Version ID                      : V02
+Switch Ports Model              SW Version            SW Image                 
+Switch#
+Switch#
+Switch#
+Switch#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi0/2, Gi0/3, Gi0/4, Gi0/5, Gi0/6, Gi0/8, Gi0/9, Gi0/10, Gi0/11, Gi0/12, Gi0/13, Gi0/14, Gi0/15, Gi0/16, Gi0/17, Gi0/18, Gi0/19, Gi0/20, Gi0/21, Gi0/22, Gi0/23, Gi0/24, Gi0/25, Gi0/26, Gi0/27, Gi0/28, Gi0/29, Gi0/30, Gi0/31, Gi0/32, Gi0/33, Gi0/34, Gi0/35, Gi0/36, Gi0/37, Gi0/38, Gi0/39, Gi0/40, Gi0/41, Gi0/42, Gi0/43, Gi0/44, Gi0/45, Gi0/46, Gi0/47, Gi0/48
+30   DREIZIG                          active    Gi0/1
+40   TEST                             active    
+98   MANAGEMENT                       active    Gi0/7
+99   MNG                              active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+Switch#
+Switch#
+Switch#
+Switch#show running-config
+Building configuration...
+
+Current configuration : 2205 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Switch
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+
+!
+!
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+!
+interface GigabitEthernet0/9
+!
+
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan98
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+
+line vty 0 4
+ password admin
+ login
+ transport input ssh
+line vty 5 15
+ login
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show running-config | begin interface
+interface GigabitEthernet0/1
+ description TEST
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+!
+interface GigabitEthernet0/4
+!
+interface GigabitEthernet0/5
+!
+interface GigabitEthernet0/6
+!
+interface GigabitEthernet0/7
+ switchport access vlan 98
+!
+interface GigabitEthernet0/8
+
+!
+interface GigabitEthernet0/9
+!
+interface GigabitEthernet0/10
+!
+interface GigabitEthernet0/11
+!
+interface GigabitEthernet0/12
+!
+interface GigabitEthernet0/13
+!
+interface GigabitEthernet0/14
+!
+interface GigabitEthernet0/15
+!
+interface GigabitEthernet0/16
+!
+interface GigabitEthernet0/17
+
+!
+interface GigabitEthernet0/18
+!
+interface GigabitEthernet0/19
+!
+interface GigabitEthernet0/20
+!
+interface GigabitEthernet0/21
+!
+
+interface GigabitEthernet0/22
+!
+interface GigabitEthernet0/23
+!
+interface GigabitEthernet0/24
+!
+interface GigabitEthernet0/25
+!
+interface GigabitEthernet0/26
+!
+interface GigabitEthernet0/27
+!
+interface GigabitEthernet0/28
+!
+interface GigabitEthernet0/29
+!
+interface GigabitEthernet0/30
+!
+
+interface GigabitEthernet0/31
+!
+interface GigabitEthernet0/32
+!
+interface GigabitEthernet0/33
+!
+interface GigabitEthernet0/34
+!
+interface GigabitEthernet0/35
+!
+interface GigabitEthernet0/36
+!
+interface GigabitEthernet0/37
+!
+interface GigabitEthernet0/38
+!
+interface GigabitEthernet0/39
+!
+interface GigabitEthernet0/40
+!
+interface GigabitEthernet0/41
+!
+interface GigabitEthernet0/42
+!
+interface GigabitEthernet0/43
+!
+interface GigabitEthernet0/44
+!
+interface GigabitEthernet0/45
+!
+interface GigabitEthernet0/46
+!
+interface GigabitEthernet0/47
+!
+interface GigabitEthernet0/48
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan98
+
+ ip address 4.4.4.5 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 0 4
+ password admin
+ login
+ transport input ssh
+
+line vty 5 15
+ login
+!
+end
+
+Switch#
+Switch#
+Switch#
+Switch#show inventory
+NAME: "1", DESCR: "WS-C2960G-48TC-L"
+PID: WS-C2960G-48TC-L  , VID: V02  , SN: FOC1148X60B
+
+
+Switch#
+
+Switch#exit
